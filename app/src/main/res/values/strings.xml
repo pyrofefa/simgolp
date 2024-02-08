@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">simgolp</string>
+    <string name="titleRL">SIMGOLP</string>
+    <string name="app_name_developer">developed by SIAFESON</string>
+
+
+    <string name="item_home">Inicio</string>
+    <string name="item_profile">Perfil</string>
+    <string name="item_catalogs">Catálogos</string>
+    <string name="item_registers">Registros</string>
+
+    <!--Home Fragment-->
+    <string name="textViewNameDay">Nombre del dia</string>
+    <string name="labelLatitude">Latitud</string>
+    <string name="labelLongitude">Longitud</string>
+    <string name="labelAccuracy">Precisión</string>
+    <string name="lblEmpty">---</string>
+    <string name="labelCountRegister">Golpeteos registrados</string>
+    <string name="labelNearByLocations">Campos cercanos</string>
+
+    <!--Login Activity -->
+    <string name="labelUsername">Usuario</string>
+    <string name="labelPassword">Contraseña</string>
+    <string name="btnLogin">Ingresar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
