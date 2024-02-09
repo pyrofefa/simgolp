@@ -1,13 +1,17 @@
 <resources>
-    <string name="app_name">simgolp</string>
+    <string name="app_name">Simgolp</string>
+    <string name="app_version">0.0.0</string>
+
     <string name="titleRL">SIMGOLP</string>
     <string name="app_name_developer">developed by SIAFESON</string>
-
 
     <string name="item_home">Inicio</string>
     <string name="item_profile">Perfil</string>
     <string name="item_catalogs">Catálogos</string>
     <string name="item_registers">Registros</string>
+
+    <string name="menu_info">Info</string>
+    <string name="menu_logout">Cerrar sesión</string>
 
     <!--Home Fragment-->
     <string name="textViewNameDay">Nombre del dia</string>
@@ -17,6 +21,16 @@
     <string name="lblEmpty">---</string>
     <string name="labelCountRegister">Golpeteos registrados</string>
     <string name="labelNearByLocations">Campos cercanos</string>
+
+    <!--Profile Fragment-->
+    <string name="textViewUserName">Nombre del técnico</string>
+    <string name="textViewJunta">Nombre de la junta local</string>
+    <string name="textViewLabelUserID">SIM ID</string>
+    <string name="textViewUserId">1234</string>
+    <string name="textViewLabelEmail">Email</string>
+    <string name="textViewEmail">correro@correro.com</string>
+    <string name="textViewLabelJuntaId">Junta ID</string>
+    <string name="textViewJuntaId">000</string>
 
     <!--Login Activity -->
     <string name="labelUsername">Usuario</string>

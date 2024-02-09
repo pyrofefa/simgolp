@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    tools:context=".activities.MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/toolbarRelativeLayout"
-        android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="@dimen/m_toolbar_height">
-
-        <TextView
-            android:id="@+id/tittleRl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:text="@string/titleRL" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#ccc"
-            android:layout_alignParentBottom="true"/>
-
-    </RelativeLayout>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></include>
 
     <FrameLayout
         android:id="@+id/FragmentLayout1"
-        android:layout_below="@+id/toolbarRelativeLayout"
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/View1" />
@@ -50,6 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="?android:attr/windowBackground"
         app:menu="@menu/my_menu"
         app:labelVisibilityMode="labeled"/>
 

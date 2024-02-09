@@ -1,4 +1,4 @@
-package movil.siafeson.simgolp.Activities
+package movil.siafeson.simgolp.activities
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -10,11 +10,10 @@ import android.widget.Toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import movil.siafeson.simgolp.Interfaces.APIService
+import movil.siafeson.simgolp.app.RetrofitHelper
+import movil.siafeson.simgolp.interfaces.APIService
 import movil.siafeson.simgolp.databinding.ActivityLoginBinding
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import movil.siafeson.simgolp.App.SharedApp
+import movil.siafeson.simgolp.app.SharedApp
 
 class LoginActivity : AppCompatActivity() {
 
@@ -54,11 +53,22 @@ class LoginActivity : AppCompatActivity() {
         progressDialog.show()
 
         CoroutineScope(Dispatchers.IO).launch {
-            var call = getRetrofit().create(APIService::class.java).login("login/viejoEsquema",userName, password)
+            var call = RetrofitHelper.getInstance()
+                .create(APIService::class.java)
+                .login("login/viejoEsquema",userName, password)
             runOnUiThread {
                 progressDialog.dismiss()
                 if (call.status) {
+                    SharedApp.preferences.userId = call.data.user_id
                     SharedApp.preferences.userName = call.data.username
+                    SharedApp.preferences.name = call.data.nombre
+                    SharedApp.preferences.lastName = "${call.data.apellido_paterno} ${call.data.apellido_materno}"
+                    SharedApp.preferences.juntaId = call.data.junta_id
+                    SharedApp.preferences.personalId = call.data.personal_id
+                    SharedApp.preferences.junta = call.data.junta_name
+                    SharedApp.preferences.juntaSICAFIId = call.data.junta_id
+                    SharedApp.preferences.email = call.data.email
+
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finishAffinity()
                 }else{
@@ -66,14 +76,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://aplicaciones.siafeson.org.mx/public/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-    private fun showError() {
-        Toast.makeText(this, "AAA", Toast.LENGTH_SHORT).show()
     }
 }

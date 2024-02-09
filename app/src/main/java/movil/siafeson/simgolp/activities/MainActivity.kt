@@ -1,15 +1,15 @@
-package movil.siafeson.simgolp.Activities
+package movil.siafeson.simgolp.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import movil.siafeson.simgolp.databinding.ActivityMainBinding
-import movil.siafeson.simgolp.Fragments.CatalogsFragment
-import movil.siafeson.simgolp.Fragments.HomeFragment
-import movil.siafeson.simgolp.Fragments.ProfileFragment
-import movil.siafeson.simgolp.Fragments.RegistersFragment
+import movil.siafeson.simgolp.fragments.CatalogsFragment
+import movil.siafeson.simgolp.fragments.HomeFragment
+import movil.siafeson.simgolp.fragments.ProfileFragment
+import movil.siafeson.simgolp.fragments.RegistersFragment
 import movil.siafeson.simgolp.R
+import movil.siafeson.simgolp.utils.ToolBarActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ToolBarActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal)
 
         viewFragmentHome()
 

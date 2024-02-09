@@ -1,4 +1,4 @@
-package movil.siafeson.simgolp.Activities
+package movil.siafeson.simgolp.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Window
 import android.view.WindowManager
-import movil.siafeson.simgolp.App.SharedApp
+import movil.siafeson.simgolp.app.SharedApp
 import movil.siafeson.simgolp.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {

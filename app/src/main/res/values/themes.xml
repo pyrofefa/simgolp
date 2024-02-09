@@ -1,11 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Simgolp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-    </style>
 
-    <style name="Theme.Simgolp" parent="Base.Theme.Simgolp" />
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDisablePreview">true</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>-->
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
     <style name="myEditTextStyle" parent="ThemeOverlay.AppCompat.Dark">
         <item name="android:colorControlNormal">#ffffff</item>
@@ -14,4 +18,5 @@
         <item name="android:colorAccent">#ffffff</item>
         <item name="android:textColorHint">#ffffff</item>
     </style>
+
 </resources>

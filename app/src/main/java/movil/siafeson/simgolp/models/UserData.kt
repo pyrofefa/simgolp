@@ -1,4 +1,4 @@
-package movil.siafeson.simgolp.Models
+package movil.siafeson.simgolp.models
 
 data class UserData (
     val user_id: Int,

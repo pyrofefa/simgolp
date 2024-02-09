@@ -1,4 +1,4 @@
-package movil.siafeson.simgolp.App
+package movil.siafeson.simgolp.app
 
 import android.app.Application
 

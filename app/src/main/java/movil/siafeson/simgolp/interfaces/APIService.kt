@@ -1,5 +1,5 @@
-package movil.siafeson.simgolp.Interfaces
-import movil.siafeson.simgolp.Models.LoginResponse
+package movil.siafeson.simgolp.interfaces
+import movil.siafeson.simgolp.models.LoginResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Url

@@ -1,4 +1,4 @@
-package movil.siafeson.simgolp.Models
+package movil.siafeson.simgolp.models
 
 import com.google.gson.annotations.SerializedName
 
