@@ -52,10 +52,11 @@ fun alertDialog(
 }
 
 
-fun showProgressDialog(title: String, message: String, context: Context): ProgressDialog {
+fun showProgressDialog(title: String, message: String, context: Context, style: Int): ProgressDialog {
     val progressDialog = ProgressDialog(context)
     progressDialog.setTitle(title)
     progressDialog.setMessage(message)
+    progressDialog.setProgressStyle(style)
     progressDialog.setCancelable(false)
     progressDialog.show()
     return progressDialog

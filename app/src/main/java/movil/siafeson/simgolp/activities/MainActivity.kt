@@ -1,9 +1,16 @@
 package movil.siafeson.simgolp.activities
 
+import android.app.ProgressDialog
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import movil.siafeson.simgolp.databinding.ActivityMainBinding
 import movil.siafeson.simgolp.fragments.CatalogsFragment
@@ -12,19 +19,29 @@ import movil.siafeson.simgolp.fragments.ProfileFragment
 import movil.siafeson.simgolp.fragments.RegistersFragment
 import movil.siafeson.simgolp.R
 import movil.siafeson.simgolp.app.RetrofitHelper
-import movil.siafeson.simgolp.app.SharedApp
+import movil.siafeson.simgolp.app.MyApp
+import movil.siafeson.simgolp.db.AppDataBase
+import movil.siafeson.simgolp.db.entities.LocationEntity
+import movil.siafeson.simgolp.db.factories.LocationViewModelFactory
+import movil.siafeson.simgolp.db.repositories.LocationRepository
+import movil.siafeson.simgolp.db.viewModels.LocationViewModel
 import movil.siafeson.simgolp.interfaces.APIService
+import movil.siafeson.simgolp.requests.LocationsRequests
 import movil.siafeson.simgolp.utils.ToolBarActivity
+import movil.siafeson.simgolp.utils.showProgressDialog
+import kotlin.concurrent.thread
 
 class MainActivity : ToolBarActivity() {
-
     private lateinit var binding: ActivityMainBinding
+    private lateinit var progressDialog: ProgressDialog
+    private lateinit var locationViewModel: LocationViewModel
+    private var currentProgress = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        progressDialog = ProgressDialog(this)
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal)
 
         viewFragmentHome()
@@ -58,19 +75,44 @@ class MainActivity : ToolBarActivity() {
     }
 
     private fun loadLocations() {
-        val userId = SharedApp.preferences.userId
+        progressDialog = showProgressDialog(
+            "Obteniendo catálogos",
+            "",
+            this,
+            ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.show()
+        progressDialog.progress = currentProgress
+        progressDialog.max = 1
+
         CoroutineScope(Dispatchers.IO).launch {
-            var call = RetrofitHelper
-                .getInstance()
-                .create(APIService::class.java)
-                .getLocations("simgolp/ubicaciones/${userId}")
-            runOnUiThread {
-                if (call.status == "success"){
-                    Toast.makeText(this@MainActivity,"${call.message}", Toast.LENGTH_SHORT).show()
-                }
-                else{
-                    Toast.makeText(this@MainActivity,"${call.message}",Toast.LENGTH_SHORT).show()
-                }
+            getLocations()
+        }
+    }
+
+    private fun getLocations() {
+        lifecycleScope.async {
+            try {
+                val resp = LocationsRequests().locations()
+                Thread(Runnable {
+                    if(progressDialog.max >= currentProgress) {
+                        currentProgress++
+                        progressDialog.progress = currentProgress
+                        resp.forEach {
+                            locationViewModel.insertLocation(it)
+                        }
+                    }
+                    try {
+                        Thread.sleep(600)
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+                    if (currentProgress >= progressDialog.max) {
+                            progressDialog.dismiss()
+                    }
+                }).start()
+            }catch (e:Exception){
+                progressDialog.dismiss()
+                Toast.makeText(this@MainActivity,"${e.message}",Toast.LENGTH_SHORT).show()
             }
         }
     }

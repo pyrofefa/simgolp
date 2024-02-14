@@ -1,9 +1,15 @@
 package movil.siafeson.simgolp.db.daos
 
+import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.Query
 import movil.siafeson.simgolp.db.entities.LocationEntity
 
+@Dao
 interface LocationDao {
     @Insert
-    fun insert(location: LocationEntity)
+    fun insertLocation(location: LocationEntity)
+
+    @Query("SELECT * FROM ubicaciones")
+    suspend fun getAllLocations(): List<LocationEntity>
 }

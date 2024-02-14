@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Window
 import android.view.WindowManager
-import movil.siafeson.simgolp.app.SharedApp
+import movil.siafeson.simgolp.app.MyApp
 import movil.siafeson.simgolp.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
                     })
                 }
                 if (progressStatus == 100){
-                    if (SharedApp.preferences.userName != ""){
+                    if (MyApp.preferences.userName != ""){
                         startActivity(Intent(this, MainActivity::class.java))
                         finishAffinity()
                     }

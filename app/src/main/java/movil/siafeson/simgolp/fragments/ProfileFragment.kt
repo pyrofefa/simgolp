@@ -12,7 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import movil.siafeson.simgolp.app.SharedApp
+import movil.siafeson.simgolp.app.MyApp
 import movil.siafeson.simgolp.R
 import movil.siafeson.simgolp.activities.LoginActivity
 import movil.siafeson.simgolp.databinding.DialogInfoBinding
@@ -81,21 +81,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getData() {
-        binding.textViewUserName.text = SharedApp.preferences.name
-        binding.textViewJunta.text = SharedApp.preferences.junta
-        binding.textViewUserId.text = SharedApp.preferences.userId.toString()
-        binding.textViewPersonalId.text = SharedApp.preferences.personalId.toString()
-        binding.textViewEmail.text = SharedApp.preferences.email
-        binding.textViewJuntaId.text = SharedApp.preferences.juntaId.toString()
+        binding.textViewUserName.text = MyApp.preferences.name
+        binding.textViewJunta.text = MyApp.preferences.junta
+        binding.textViewUserId.text = MyApp.preferences.userId.toString()
+        binding.textViewPersonalId.text = MyApp.preferences.personalId.toString()
+        binding.textViewEmail.text = MyApp.preferences.email
+        binding.textViewJuntaId.text = MyApp.preferences.juntaId.toString()
     }
     private fun logOff() {
-        SharedApp.preferences.userName = ""
-        SharedApp.preferences.name = ""
-        SharedApp.preferences.junta = ""
-        SharedApp.preferences.userId = 0
-        SharedApp.preferences.personalId = 0
-        SharedApp.preferences.email = ""
-        SharedApp.preferences.juntaId = 0
+        MyApp.preferences.userName = ""
+        MyApp.preferences.name = ""
+        MyApp.preferences.junta = ""
+        MyApp.preferences.userId = 0
+        MyApp.preferences.personalId = 0
+        MyApp.preferences.email = ""
+        MyApp.preferences.juntaId = 0
 
         startActivity(Intent(mContext, LoginActivity::class.java))
         activity?.finishAffinity()

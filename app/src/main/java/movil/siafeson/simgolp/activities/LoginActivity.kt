@@ -2,7 +2,6 @@ package movil.siafeson.simgolp.activities
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,8 +18,7 @@ import kotlinx.coroutines.launch
 import movil.siafeson.simgolp.app.RetrofitHelper
 import movil.siafeson.simgolp.interfaces.APIService
 import movil.siafeson.simgolp.databinding.ActivityLoginBinding
-import movil.siafeson.simgolp.app.SharedApp
-import movil.siafeson.simgolp.utils.alertDialog
+import movil.siafeson.simgolp.app.MyApp
 import movil.siafeson.simgolp.utils.isOnlineNet
 import movil.siafeson.simgolp.utils.showProgressDialog
 
@@ -121,7 +119,9 @@ class LoginActivity : AppCompatActivity() {
         progressDialog = showProgressDialog(
             "Iniciando sesión",
             "Verificando datos de acceso",
-            this)
+            this,
+            ProgressDialog.STYLE_SPINNER,
+        )
         progressDialog.show()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -131,15 +131,15 @@ class LoginActivity : AppCompatActivity() {
             runOnUiThread {
                 progressDialog.dismiss()
                 if (call.status) {
-                    SharedApp.preferences.userId = call.data.user_id
-                    SharedApp.preferences.userName = call.data.username
-                    SharedApp.preferences.name = call.data.nombre
-                    SharedApp.preferences.lastName = "${call.data.apellido_paterno} ${call.data.apellido_materno}"
-                    SharedApp.preferences.juntaId = call.data.junta_id
-                    SharedApp.preferences.personalId = call.data.personal_id
-                    SharedApp.preferences.junta = call.data.junta_name
-                    SharedApp.preferences.juntaSICAFIId = call.data.junta_id
-                    SharedApp.preferences.email = call.data.email
+                    MyApp.preferences.userId = call.data.user_id
+                    MyApp.preferences.userName = call.data.username
+                    MyApp.preferences.name = call.data.nombre
+                    MyApp.preferences.lastName = "${call.data.apellido_paterno} ${call.data.apellido_materno}"
+                    MyApp.preferences.juntaId = call.data.junta_id
+                    MyApp.preferences.personalId = call.data.personal_id
+                    MyApp.preferences.junta = call.data.junta_name
+                    MyApp.preferences.juntaSICAFIId = call.data.junta_id
+                    MyApp.preferences.email = call.data.email
 
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finishAffinity()

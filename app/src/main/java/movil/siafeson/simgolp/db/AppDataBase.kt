@@ -12,12 +12,12 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
 
     companion object{
-        private const val DATABASE_NAME = "simgolp.db"
-
         @Volatile
         private var INSTANCE: AppDataBase? = null
 
-        fun getInstance(context: Context): AppDataBase{
+        private const val DATABASE_NAME = "simgolp.db"
+
+        fun getDatabase(context: Context): AppDataBase{
             synchronized(this){
                 var instance = INSTANCE
                 if (instance == null){
