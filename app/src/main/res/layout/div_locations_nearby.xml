@@ -37,8 +37,8 @@
         android:id="@+id/divLocationsEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/labelLocationsNearby"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/labelLocationsNearby">

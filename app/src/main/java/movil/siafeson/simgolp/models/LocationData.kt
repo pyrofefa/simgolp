@@ -7,5 +7,7 @@ data class LocationData(
     val latitud: String,
     val longitud: String,
     val superficie: String,
-    val id_sicafi: Int
+    val id_sicafi: Int,
+    var distancia: Double? = null,
+    var cardinal: String? = null
 )

@@ -3,7 +3,10 @@ package movil.siafeson.simgolp.activities
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +38,7 @@ class MainActivity : ToolBarActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var progressDialog: ProgressDialog
     private lateinit var locationViewModel: LocationViewModel
+
     private var currentProgress = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +47,8 @@ class MainActivity : ToolBarActivity() {
         setContentView(binding.root)
         progressDialog = ProgressDialog(this)
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal)
+
+        locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
 
         viewFragmentHome()
         loadLocations()
@@ -94,8 +100,8 @@ class MainActivity : ToolBarActivity() {
             try {
                 val resp = LocationsRequests().locations()
                 Thread(Runnable {
+                    currentProgress++
                     if(progressDialog.max >= currentProgress) {
-                        currentProgress++
                         progressDialog.progress = currentProgress
                         resp.forEach {
                             locationViewModel.insertLocation(it)

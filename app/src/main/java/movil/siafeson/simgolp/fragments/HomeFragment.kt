@@ -13,18 +13,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest.*
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import movil.siafeson.simgolp.R
+import movil.siafeson.simgolp.adapters.LocationListAdapter
 import movil.siafeson.simgolp.databinding.FragmentHomeBinding
+import movil.siafeson.simgolp.db.entities.LocationEntity
+import movil.siafeson.simgolp.db.viewModels.LocationViewModel
+import movil.siafeson.simgolp.models.LocationData
 import movil.siafeson.simgolp.utils.fechaCompleta
 import movil.siafeson.simgolp.utils.nombreDiaActual
 import movil.siafeson.simgolp.utils.alertDialog
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
+    private lateinit var locationViewModel: LocationViewModel
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mContext: Context
@@ -36,6 +44,9 @@ class HomeFragment : Fragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
+    private lateinit var locationListAdapter: LocationListAdapter
+    private val locationList = mutableListOf<LocationData>()
+
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
@@ -46,14 +57,52 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
         setHasOptionsMenu(true)
-        return binding.root
+        binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
+        val view = binding.root
+
+        locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        return view
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getDate()
         checkPermissions()
+        loadListLocation()
+    }
+
+    private fun loadListLocation() {
+        locationViewModel.getAllLocations().observe(viewLifecycleOwner, Observer { locationEntityList ->
+            val locationDataList = locationEntityList.map { locationEntity ->
+                transformLocationEntityToLocationData(locationEntity)
+            }
+
+            locationList.clear()
+            locationList.addAll(locationDataList)
+
+            locationListAdapter = LocationListAdapter(mContext,R.layout.list_locations,locationList)
+            binding.DivLocationsNearBy.labelLocationsNearby.adapter = locationListAdapter
+
+            if (locationList!!.isEmpty()) {
+                binding.DivLocationsNearBy.labelLocationsEmpty.visibility = View.VISIBLE
+                binding.DivLocationsNearBy.ivLogoNoHay.visibility = View.VISIBLE
+            } else {
+                binding.DivLocationsNearBy.labelLocationsEmpty.visibility = View.INVISIBLE
+                binding.DivLocationsNearBy.ivLogoNoHay.visibility = View.INVISIBLE
+            }
+        })
+    }
+
+    private fun transformLocationEntityToLocationData(locationEntity: LocationEntity) : LocationData {
+        return LocationData(
+            id_bit = locationEntity.idBit,
+            predio = locationEntity.predio,
+            latitud = locationEntity.longitud,
+            longitud = locationEntity.latitud,
+            superficie =  locationEntity.superficie,
+            status = locationEntity.predio.toIntOrNull() ?: 1,
+            id_sicafi = locationEntity.idSicafi
+        )
     }
 
     override fun onRequestPermissionsResult(

@@ -2,12 +2,16 @@ package movil.siafeson.simgolp.app
 
 import android.app.Application
 import movil.siafeson.simgolp.interfaces.APIService
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+
 val services: APIService by lazy { MyApp.service!! }
 
 class MyApp: Application() {
-    private lateinit var retrofit: Retrofit
+    private var retrofit: Retrofit? = null
 
     companion object {
         lateinit var preferences: Preferences
@@ -18,14 +22,27 @@ class MyApp: Application() {
         super.onCreate()
         preferences = Preferences(applicationContext)
         DatabaseSingleton.initialize(this)
-        initializeRetrofit()
+        getHttpIntance()
     }
-    private fun initializeRetrofit() {
-        retrofit = Retrofit.Builder()
-            .baseUrl("https://aplicaciones.siafeson.org.mx/public/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
 
-        service = retrofit.create(APIService::class.java)
+    fun getHttpIntance() {
+        if (retrofit == null) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+            val client: OkHttpClient = OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .connectTimeout(0, TimeUnit.SECONDS)
+                .readTimeout(0, TimeUnit.SECONDS).build()
+
+            retrofit = Retrofit.Builder()
+                .baseUrl("https://aplicaciones.siafeson.org.mx/public/api/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        service = retrofit!!.create(APIService::class.java)
     }
 }
+
+

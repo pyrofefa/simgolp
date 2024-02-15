@@ -1,6 +1,7 @@
 package movil.siafeson.simgolp.interfaces
 import movil.siafeson.simgolp.models.LocationsResponse
 import movil.siafeson.simgolp.models.LoginResponse
+import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -18,7 +19,7 @@ interface APIService {
     ): LoginResponse
 
     @GET
-    suspend fun getLocations(@Url url:String) : LocationsResponse
+    suspend fun getLocations(@Url url:String) : Response<LocationsResponse>
 
     @POST
     suspend fun addRecord(
