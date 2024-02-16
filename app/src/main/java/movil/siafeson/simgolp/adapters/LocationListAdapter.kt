@@ -4,11 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
-import movil.siafeson.simgolp.R
 import movil.siafeson.simgolp.databinding.ListLocationsBinding
-import movil.siafeson.simgolp.db.entities.LocationEntity
 import movil.siafeson.simgolp.models.LocationData
 
 class LocationListAdapter(
@@ -39,8 +36,8 @@ class LocationListAdapter(
             }
 
             binding.listLocationName.text = this.locations[position].predio ?: "N/A"
-            binding.listLocationPosition.text =  "${this.locations[position].distancia} Km. | Dir: ${this.locations[position].cardinal}"
-            binding.listLocationHa.text = this.locations[position].superficie
+            binding.listLocationPosition.text =  "${this.locations[position].distancia} Km. | Dir: ${this.locations[position].orientacion}"
+            binding.listLocationHa.text = this.locations[position].superficie.toString()
         return binding.root
     }
 }

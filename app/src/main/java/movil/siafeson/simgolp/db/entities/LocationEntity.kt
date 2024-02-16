@@ -10,9 +10,9 @@ data class LocationEntity (
     @SerializedName("id_bit") val idBit: Int,
     @SerializedName("predio") val predio: String,
     @SerializedName("status") val status: Int,
-    @SerializedName("latitud") val latitud: String,
-    @SerializedName("longitud") val longitud: String,
-    @SerializedName("superficie") val superficie: String,
+    @SerializedName("latitud") val latitud: Double,
+    @SerializedName("longitud") val longitud: Double,
+    @SerializedName("superficie") val superficie: Double,
     @SerializedName("id_sicafi") val idSicafi: Int
 )
 

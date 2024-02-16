@@ -22,10 +22,12 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import movil.siafeson.simgolp.R
 import movil.siafeson.simgolp.adapters.LocationListAdapter
+import movil.siafeson.simgolp.app.distanceAllowed
 import movil.siafeson.simgolp.databinding.FragmentHomeBinding
 import movil.siafeson.simgolp.db.entities.LocationEntity
 import movil.siafeson.simgolp.db.viewModels.LocationViewModel
 import movil.siafeson.simgolp.models.LocationData
+import movil.siafeson.simgolp.utils.Utileria
 import movil.siafeson.simgolp.utils.fechaCompleta
 import movil.siafeson.simgolp.utils.nombreDiaActual
 import movil.siafeson.simgolp.utils.alertDialog
@@ -44,8 +46,7 @@ class HomeFragment : Fragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
-    private lateinit var locationListAdapter: LocationListAdapter
-    private val locationList = mutableListOf<LocationData>()
+    private var locationListAdapter: LocationListAdapter? = null
 
     override fun onAttach(context: Context) {
         mContext = context
@@ -60,7 +61,6 @@ class HomeFragment : Fragment() {
         setHasOptionsMenu(true)
         binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
         val view = binding.root
-
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         return view
     }
@@ -68,22 +68,56 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getDate()
         checkPermissions()
-        loadListLocation()
     }
 
-    private fun loadListLocation() {
+    override fun onDestroyView() {
+        parentFragment?.let { locationViewModel.getAllLocations().removeObservers(it.viewLifecycleOwner) }
+        super.onDestroyView()
+    }
+
+    private fun loadListLocation(latitude: Double, longitude: Double) {
         locationViewModel.getAllLocations().observe(viewLifecycleOwner, Observer { locationEntityList ->
             val locationDataList = locationEntityList.map { locationEntity ->
                 transformLocationEntityToLocationData(locationEntity)
             }
 
-            locationList.clear()
-            locationList.addAll(locationDataList)
+            try {
+                val myLocation = Location("My Locations")
+                myLocation.latitude = latitude
+                myLocation.longitude = longitude
+                locationDataList.forEach { field ->
+                    val location = Location("Location Field")
+                    location.latitude = field.latitud
+                    location.longitude = field.longitud
+                    val distance = myLocation.distanceTo(location)
+                    if (distance <= distanceAllowed) {
+                        // Formatea la cadena de distancia, reemplazando caracteres no deseados
+                        val distanceString = String.format("%.3f", (distance / 1000))
+                        val cleanedDistanceString = distanceString.replace(Regex("[^\\d.]"), "")
+                        val km = cleanedDistanceString.toDouble()
+                        val bear = myLocation.bearingTo(location)
+                        val orientation = Utileria().getOrien(bear)
 
-            locationListAdapter = LocationListAdapter(mContext,R.layout.list_locations,locationList)
-            binding.DivLocationsNearBy.labelLocationsNearby.adapter = locationListAdapter
+                        // Actualiza la ubicación original con la distancia y orientación
+                        field.distancia = km
+                        field.orientacion = orientation
+                    }
+                }
+                // Inicializa el adaptador si aún no ha sido inicializado
+                if (locationListAdapter == null) {
+                    locationListAdapter = LocationListAdapter(mContext, R.layout.list_locations, locationDataList)
+                    binding.DivLocationsNearBy.labelLocationsNearby.adapter = locationListAdapter
+                } else {
+                    // Si ya ha sido inicializado, notifica que los datos han cambiado
+                    locationListAdapter?.notifyDataSetChanged()
+                }
 
-            if (locationList!!.isEmpty()) {
+            }catch (e: Exception){
+                Log.e("Ubicaciones cercanas", "Error: ${e.message}")
+            }
+
+            // Actualiza la interfaz de usuario según si la lista está vacía o no
+            if (locationDataList.isEmpty()) {
                 binding.DivLocationsNearBy.labelLocationsEmpty.visibility = View.VISIBLE
                 binding.DivLocationsNearBy.ivLogoNoHay.visibility = View.VISIBLE
             } else {
@@ -93,15 +127,17 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun transformLocationEntityToLocationData(locationEntity: LocationEntity) : LocationData {
+    private fun transformLocationEntityToLocationData(locationEntity: LocationEntity): LocationData {
         return LocationData(
             id_bit = locationEntity.idBit,
             predio = locationEntity.predio,
-            latitud = locationEntity.longitud,
-            longitud = locationEntity.latitud,
-            superficie =  locationEntity.superficie,
+            latitud = locationEntity.latitud,
+            longitud = locationEntity.longitud,
+            superficie = locationEntity.superficie,
             status = locationEntity.predio.toIntOrNull() ?: 1,
-            id_sicafi = locationEntity.idSicafi
+            id_sicafi = locationEntity.idSicafi,
+            distancia = 0.0,
+            orientacion = ""
         )
     }
 
@@ -112,10 +148,10 @@ class HomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CODE_PERMISSION_LOCATION){
-            val allPermisions = grantResults.all {
+            val allPermissions = grantResults.all {
                 it == PackageManager.PERMISSION_GRANTED
             }
-            if (grantResults.isNotEmpty() && allPermisions){
+            if (grantResults.isNotEmpty() && allPermissions){
                 hasGratedPermission = true
                 onPermissions()
             }
@@ -157,7 +193,7 @@ class HomeFragment : Fragment() {
         try {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 if (it != null){
-                    getLocations(it)
+                    showLocations(it)
                 }else{
                     alertDialog(
                         "GPS Inactivo",
@@ -176,7 +212,7 @@ class HomeFragment : Fragment() {
                 override fun onLocationResult(p0: LocationResult) {
                     p0?: return
                     for (location in p0.locations){
-                        getLocations(location)
+                        showLocations(location)
                     }
                 }
             }
@@ -197,11 +233,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getLocations(location: Location) {
+    private fun showLocations(location: Location) {
         binding.textViewLatitude.text = "${String.format("%.6f",location.latitude)}"
         binding.textViewLongitude.text = "${String.format("%.6f",location.longitude)}"
         binding.textViewAccuracy.text = "${String.format("%.2f",location.accuracy)}"
-
+        loadListLocation(location.latitude,location.longitude)
     }
 
     private fun getDate() {
