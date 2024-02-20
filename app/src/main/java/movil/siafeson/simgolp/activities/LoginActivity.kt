@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             var username =  binding.editTextUserName.text.toString().trim()
             var password =  binding.editTextPassword.text.toString().trim()
-            if (isOnlineNet()){
+            if (isOnlineNet(this)){
                 if (username.isEmpty()){
                     Toast.makeText(this@LoginActivity,"Debe ingresar el nombre de usuario",Toast.LENGTH_SHORT).show()
                 }else if(password.isEmpty()){

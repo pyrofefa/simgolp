@@ -29,5 +29,10 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             emit(locations)
         }
     }
+    fun deleteLocation(){
+        viewModelScope.launch {
+            repository.deleteLocations()
+        }
+    }
 
 }

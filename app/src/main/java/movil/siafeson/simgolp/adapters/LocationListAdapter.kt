@@ -11,7 +11,7 @@ import movil.siafeson.simgolp.models.LocationData
 class LocationListAdapter(
     private val context: Context,
     val layout: Int,
-    private val locations: List<LocationData>
+    private var locations: List<LocationData>
 ) : BaseAdapter()
      {
          override fun getCount(): Int {
@@ -40,4 +40,8 @@ class LocationListAdapter(
             binding.listLocationHa.text = this.locations[position].superficie.toString()
         return binding.root
     }
+         fun updateData(newLocationDataList: List<LocationData>) {
+             locations = newLocationDataList
+             notifyDataSetChanged()
+         }
 }

@@ -1,6 +1,5 @@
 package movil.siafeson.simgolp.utils
 
-import android.app.Activity
 import android.content.Context
 import android.app.ProgressDialog
 import android.net.ConnectivityManager
@@ -9,8 +8,8 @@ import androidx.appcompat.app.AlertDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun Activity.isOnlineNet(): Boolean {
-    val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE)
+fun isOnlineNet(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
     return if (connectivityManager is ConnectivityManager) {
         val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
         networkInfo?.isConnected ?: false
@@ -37,18 +36,34 @@ fun String.ucFirst(): String {
     }
 }
 
-fun alertDialog(
-    title: String,
-    message: String,
-    actionText: String,
+fun showAlertDialog(
+    title: String? = null,
+    message: String? = null,
     context: Context,
+    positiveButtonTitle: String = "",
+    positiveButtonAction: (() -> Unit)? = null,
+    negativeButtonTitle: String? = null,
+    negativeButtonAction: (() -> Unit)? = null
 ) {
-    val builder = AlertDialog.Builder(context)
-    builder.setTitle(title)
-    builder.setMessage(message)
-    builder.setPositiveButton(actionText,null)
-    val alertDialog: AlertDialog = builder.create()
-    alertDialog.show()
+    val alertDialogBuilder = AlertDialog.Builder(context)
+
+    // Configuración del diálogo
+    alertDialogBuilder.apply {
+        setTitle(title)
+        setMessage(message)
+        setPositiveButton(positiveButtonTitle) { _, _ ->
+            positiveButtonAction?.invoke()
+        }
+
+        if (negativeButtonTitle != null) {
+            setNegativeButton(negativeButtonTitle) { _, _ ->
+                negativeButtonAction?.invoke()
+            }
+        }
+    }
+
+    // Crear y mostrar el diálogo
+    alertDialogBuilder.create().show()
 }
 
 

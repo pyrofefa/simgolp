@@ -16,4 +16,9 @@ class LocationRepository(private val locationDao: LocationDao) {
             locationDao.getAllLocations()
         }
     }
+    suspend fun deleteLocations(){
+        withContext(Dispatchers.IO){
+            locationDao.deleteLocation()
+        }
+    }
 }

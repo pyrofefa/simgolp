@@ -51,8 +51,9 @@ class MainActivity : ToolBarActivity() {
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
 
         viewFragmentHome()
-        loadLocations()
-
+        if (!MyApp.preferences.locationUpdate) {
+            loadLocations()
+        }
         binding.ButtonNavigationView.setItemIconTintList(null)
         binding.ButtonNavigationView.setOnItemSelectedListener { item ->
             when(item.itemId){
@@ -114,6 +115,7 @@ class MainActivity : ToolBarActivity() {
                     }
                     if (currentProgress >= progressDialog.max) {
                             progressDialog.dismiss()
+                            MyApp.preferences.locationUpdate = true
                     }
                 }).start()
             }catch (e:Exception){

@@ -12,17 +12,22 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.simgolp.app.MyApp
 import movil.siafeson.simgolp.R
 import movil.siafeson.simgolp.activities.LoginActivity
 import movil.siafeson.simgolp.databinding.DialogInfoBinding
 import movil.siafeson.simgolp.databinding.FragmentProfileBinding
+import movil.siafeson.simgolp.db.viewModels.LocationViewModel
+import movil.siafeson.simgolp.utils.showAlertDialog
 
 class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var dialogInfoBinding: DialogInfoBinding
     private lateinit var mContext: Context
+
+    private lateinit var locationViewModel: LocationViewModel
 
     private lateinit var alertDialog: AlertDialog
 
@@ -38,6 +43,8 @@ class ProfileFragment : Fragment() {
     ): View? {
         binding = FragmentProfileBinding.inflate(layoutInflater,container,false)
         setHasOptionsMenu(true)
+        locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+
         return binding.root
     }
 
@@ -58,12 +65,26 @@ class ProfileFragment : Fragment() {
                 return true
             }
             R.id.menu_logout -> {
-                logOff()
+                createDialogLogOff()
                 return true
             }
 
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun createDialogLogOff() {
+        showAlertDialog(
+            "Cerrar sesión",
+            "Los registros del móvil serán eliminados al cerrar sesión, ¿Seguro que desea cerrar sesión?",
+            mContext,
+            "Si, continuar",
+            positiveButtonAction = {
+                logOff()
+            },
+            "Cancelar"
+        )
+
     }
 
     private fun createDialogInfo() {
@@ -96,6 +117,9 @@ class ProfileFragment : Fragment() {
         MyApp.preferences.personalId = 0
         MyApp.preferences.email = ""
         MyApp.preferences.juntaId = 0
+        MyApp.preferences.locationUpdate = false
+
+        locationViewModel.deleteLocation()
 
         startActivity(Intent(mContext, LoginActivity::class.java))
         activity?.finishAffinity()

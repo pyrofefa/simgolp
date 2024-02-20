@@ -43,4 +43,8 @@ class Preferences(context: Context) {
         get() = prefs.getString("email","")
         set(value) = prefs.edit().putString("email",value).apply()
 
+    var locationUpdate: Boolean
+        get() = prefs.getBoolean("locations-update",false)
+        set(value) = prefs.edit().putBoolean("locations-update",value).apply()
+
 }

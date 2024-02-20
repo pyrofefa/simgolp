@@ -12,4 +12,8 @@ interface LocationDao {
 
     @Query("SELECT * FROM ubicaciones")
     suspend fun getAllLocations(): List<LocationEntity>
+
+    // TRUNCATE TABLE
+    @Query("DELETE FROM ubicaciones")
+    fun deleteLocation()
 }
