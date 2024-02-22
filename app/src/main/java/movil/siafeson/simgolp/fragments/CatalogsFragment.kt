@@ -10,15 +10,18 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.simgolp.R
+import movil.siafeson.simgolp.activities.LocationsActivity
 import movil.siafeson.simgolp.adapters.CatalogsAdapter
 import movil.siafeson.simgolp.adapters.LocationListAdapter
 import movil.siafeson.simgolp.databinding.FragmentCatalogsBinding
 import movil.siafeson.simgolp.db.viewModels.LocationViewModel
 import movil.siafeson.simgolp.models.CatalogData
+import movil.siafeson.simgolp.utils.goToActivity
 import movil.siafeson.simgolp.utils.isOnlineNet
 
 class CatalogsFragment : Fragment() {
@@ -52,14 +55,21 @@ class CatalogsFragment : Fragment() {
             size = list.size
             loadGrid()
         }
+
+        binding.catGvList.setOnItemClickListener { _, view, _, _ ->
+            val tvID = view.findViewById<TextView>(R.id.ce_lbl_id)
+            when (tvID.text.toString().toInt()) {
+                1 -> goToActivity<LocationsActivity> { }
+            }
+        }
     }
 
     private fun loadGrid() {
-        Log.i("locations 4","${size}")
-
         available.add(CatalogData(1,"Campos",size))
         locationListAdapter = CatalogsAdapter(mContext,R.layout.list_locations,available)
         binding.catGvList.adapter = locationListAdapter
+
+        binding.lblNumCatalogosDisponibles.text = available.size.toString()
     }
 
     //OPERATIVOS
