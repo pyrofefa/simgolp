@@ -34,5 +34,11 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             repository.deleteLocations()
         }
     }
+    fun getOrderedElements(): LiveData<List<LocationEntity>> {
+        return liveData(Dispatchers.IO) {
+            val locations = repository.getOrderedElements()
+            locations?.let { emit(it) }
+        }
+    }
 
 }

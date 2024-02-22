@@ -16,4 +16,7 @@ interface LocationDao {
     // TRUNCATE TABLE
     @Query("DELETE FROM ubicaciones")
     fun deleteLocation()
+
+    @Query("SELECT * FROM ubicaciones ORDER BY predio")
+    fun getOrderedElements(): List<LocationEntity>
 }

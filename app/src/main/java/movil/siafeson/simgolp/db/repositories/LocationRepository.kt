@@ -4,6 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import movil.siafeson.simgolp.db.daos.LocationDao
 import movil.siafeson.simgolp.db.entities.LocationEntity
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 class LocationRepository(private val locationDao: LocationDao) {
     suspend fun insertLocation(location: LocationEntity){
@@ -20,5 +23,10 @@ class LocationRepository(private val locationDao: LocationDao) {
         withContext(Dispatchers.IO){
             locationDao.deleteLocation()
         }
+    }
+     suspend fun getOrderedElements(): List<LocationEntity>? {
+         return withContext(Dispatchers.IO) {
+             locationDao.getOrderedElements() ?: listOfNotNull<LocationEntity>()
+         }
     }
 }
