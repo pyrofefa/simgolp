@@ -3,18 +3,15 @@ package movil.siafeson.simgolp.activities
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.simgolp.R
-import movil.siafeson.simgolp.adapters.CatalogsAdapter
 import movil.siafeson.simgolp.adapters.LocationListAdapter
 import movil.siafeson.simgolp.databinding.ActivityLocationsBinding
 import movil.siafeson.simgolp.db.entities.LocationEntity
 import movil.siafeson.simgolp.db.viewModels.LocationViewModel
 import movil.siafeson.simgolp.models.LocationData
 import movil.siafeson.simgolp.utils.ToolBarActivity
-import java.util.Locale.filter
 
 class LocationsActivity : ToolBarActivity() {
 
@@ -75,10 +72,20 @@ class LocationsActivity : ToolBarActivity() {
                     locationListAdapter?.filter(query)
                     binding.tvNumCamposAsig.text = "${locationListAdapter?.count}"
                 }
-
-
             }
         })
     }
+    //Metodos para regresar
+    override fun onSupportNavigateUp(): Boolean {
+        super.onBackPressed()
+        return true
+    }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            super.onBackPressed()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 }
