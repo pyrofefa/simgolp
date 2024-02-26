@@ -248,29 +248,87 @@
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnGuardar"
+            app:layout_constraintBottom_toTopOf="@+id/btnSave"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hr1">
+            app:layout_constraintTop_toBottomOf="@+id/hr1"
+            app:layout_constraintVertical_bias="0.0">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="vertical">
-            </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <TextView
+                    android:id="@+id/textViewResult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/labelNoAdults"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/editTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textViewResult"
+                    android:layout_marginTop="16dp"
+                    android:hint="Ingrese no adultos"
+                    android:inputType="number" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextInput"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:id="@+id/textViewSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¿Recurso de productor?"
+                        android:textStyle="bold"
+                        android:textSize="18sp"/>
+
+                    <Switch
+                        android:id="@+id/switchExample"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/textViewSwitch"
+                        android:layout_marginStart="18dp" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btnAdd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnAdd"
+                    android:background="@color/colorAccent"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="40dp"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </ScrollView>
 
         <Button
-            android:id="@+id/btnGuardar"
+            android:id="@+id/btnSave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
             android:background="@color/colorPrimaryDark"
-            android:text="Guardar registro"
+            android:text="@string/btnSave"
             android:textAlignment="center"
+            android:enabled="false"
             android:textColor="@color/cardview_light_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

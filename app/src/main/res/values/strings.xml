@@ -41,7 +41,15 @@
     <string name="labelPassword">Contraseña</string>
     <string name="btnLogin">Ingresar</string>
 
+    <!--Golpeteo Activity -->
+    <string name="labelResource">¿Recurso de productor?</string>
+    <string name="labelNoAdults">Número de adultos</string>
+    <string name="btnAdd">Guardar</string>
+    <string name="btnSave">Finalizar</string>
+
+
     <string name="com_msj_buscar_elemento">Buscar...</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
