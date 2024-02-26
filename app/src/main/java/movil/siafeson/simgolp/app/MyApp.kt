@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 val services: APIService by lazy { MyApp.service!! }
 val distanceAllowed: Double = 150000.0
-val acurracyAlloWed: Float = 16.toFloat()
+val accurracyAlloWed: Float = 16.toFloat()
 
 class MyApp: Application() {
     private var retrofit: Retrofit? = null

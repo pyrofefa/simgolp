@@ -36,6 +36,14 @@ fun Calendar.fechaCompleta(): String{
     val fecha: String = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", espanol).format(date)
     return fecha
 }
+fun Date.fechaHoraSimple(): String{
+    val hoy: String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(this)
+    return hoy;
+}
+fun Date.fechaHoraCompleta(): String{
+    val hoy: String = SimpleDateFormat("dd 'de' MMMM 'de' yyyy HH:mm:ss").format(this)
+    return hoy;
+}
 //String
 fun String.ucFirst(): String {
     if (this == null || this.isEmpty()) {

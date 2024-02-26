@@ -51,13 +51,12 @@ class LocationListAdapter(
          fun filter(query: String) {
              //Filtrando en base a la lista original
              val filteredList = originalLocationDataList.filter { locationData ->
-                 // Aplica lógica de filtrado aquí
-                 Log.d("Entrando a filter", "$locationData")
+                 // lógica de filtrado aquí
                  locationData.predio.contains(query, ignoreCase = true)
               }
              Log.d("filteredList", "$filteredList")
 
-             // Actualiza la lista filtrada y notifica el cambio
+             //lista filtrada y notifica el cambio
              locations = filteredList
              notifyDataSetChanged()
              Log.d("LocationListAdapter", "Lista después del filtrado: $locations")

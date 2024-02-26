@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/formLblNuevoCampo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.GolpeteoActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:focusableInTouchMode="true">
+
+        <LinearLayout
+            android:id="@+id/lyBack"
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lblCampo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="Campo:"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lblGeo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Geopos.:"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblCampo" />
+
+        <TextView
+            android:id="@+id/lblDistancia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Distancia aprox. (m):"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblGeo" />
+
+        <TextView
+            android:id="@+id/lbFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Fecha:"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblDistancia" />
+
+        <TextView
+            android:id="@+id/tvCampo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:text="Nombre del campo"
+            android:textAllCaps="true"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lblCampo"
+            app:layout_constraintTop_toTopOf="@+id/lyBack" />
+
+        <TextView
+            android:id="@+id/tvGeopos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="1, -1"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lblGeo"
+            app:layout_constraintTop_toBottomOf="@+id/tvCampo" />
+
+        <TextView
+            android:id="@+id/tvDistancia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="9999.99"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lblDistancia"
+            app:layout_constraintTop_toBottomOf="@+id/tvGeopos" />
+
+        <TextView
+            android:id="@+id/tvFecha"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="0000-00-00"
+            android:textAllCaps="true"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lbFecha"
+            app:layout_constraintTop_toBottomOf="@+id/tvDistancia" />
+
+        <TextView
+            android:id="@+id/lblPosLon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center"
+            android:text="@string/labelLongitude"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/lblPosLat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lyBack" />
+
+        <TextView
+            android:id="@+id/lblPosLat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/labelLatitude"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/lblPosAcc"
+            app:layout_constraintStart_toEndOf="@+id/lblPosLon"
+            app:layout_constraintTop_toBottomOf="@+id/lyBack" />
+
+
+        <TextView
+            android:id="@+id/tvPosLon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical|center"
+            android:text="00.000000000"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvPosLlat"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblPosLon" />
+
+        <TextView
+            android:id="@+id/lblPosAcc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/labelAccuracy"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lblPosLat"
+            app:layout_constraintTop_toBottomOf="@+id/lyBack" />
+
+        <TextView
+            android:id="@+id/tvPosLlat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="-000.000000000"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvPosAcc"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tvPosLon"
+            app:layout_constraintTop_toBottomOf="@+id/lblPosLat" />
+
+        <TextView
+            android:id="@+id/tvPosAcc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="999.99"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tvPosLlat"
+            app:layout_constraintTop_toBottomOf="@+id/lblPosAcc" />
+
+        <LinearLayout
+            android:id="@+id/hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPosLlat" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnGuardar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hr1">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btnGuardar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="Guardar registro"
+            android:textAlignment="center"
+            android:textColor="@color/cardview_light_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

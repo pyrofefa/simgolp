@@ -14,6 +14,8 @@
     <string name="menu_logout">Cerrar sesión</string>
     <string name="menu_update_catalogs">Actualizar catálogos</string>
 
+    <string name="form_lbl_info_espera">--- Esperando precisión ---</string>
+    <string name="form_lbl_info_listo">--- Listo ---</string>
 
     <!--Home Fragment-->
     <string name="textViewNameDay">Nombre del dia</string>

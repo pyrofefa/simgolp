@@ -1,11 +1,14 @@
 package movil.siafeson.simgolp.activities
 
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -31,6 +34,7 @@ import movil.siafeson.simgolp.db.viewModels.LocationViewModel
 import movil.siafeson.simgolp.interfaces.APIService
 import movil.siafeson.simgolp.requests.LocationsRequests
 import movil.siafeson.simgolp.utils.ToolBarActivity
+import movil.siafeson.simgolp.utils.showAlertDialog
 import movil.siafeson.simgolp.utils.showProgressDialog
 import kotlin.concurrent.thread
 
@@ -151,6 +155,38 @@ class MainActivity : ToolBarActivity() {
         val fragmentTransition = supportFragmentManager.beginTransaction()
         fragmentTransition.replace(binding.FragmentLayout1.id, fragment, "homeFragment")
         fragmentTransition.commit()
+    }
+
+    //Metodos para regresar
+    override fun onSupportNavigateUp(): Boolean {
+        showAlertDialog(
+            "Salir",
+            "¿Estás seguro de salir de la aplicación?",
+            this,
+            "Si",
+            positiveButtonAction = {
+                this.finish()
+            },
+            "Cancelar"
+        )
+        return true
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            showAlertDialog(
+                "Salir",
+                "¿Estás seguro de salir de la aplicación?",
+                this,
+                "Si",
+                positiveButtonAction = {
+                    this.finish()
+                },
+                "Cancelar"
+            )
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
 }

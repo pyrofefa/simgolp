@@ -2,9 +2,12 @@ package movil.siafeson.simgolp.fragments
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,6 +23,7 @@ import com.google.android.gms.location.LocationRequest.*
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import movil.siafeson.simgolp.R
+import movil.siafeson.simgolp.activities.GolpeteoActivity
 import movil.siafeson.simgolp.adapters.LocationListAdapter
 import movil.siafeson.simgolp.app.distanceAllowed
 import movil.siafeson.simgolp.databinding.FragmentHomeBinding
@@ -38,6 +42,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var locationViewModel: LocationViewModel
     private var locationListAdapter: LocationListAdapter? = null
+
+    private var isButtonEnabled = true
 
     private lateinit var mContext: Context
 
@@ -137,7 +143,7 @@ class HomeFragment : Fragment() {
         }
     }
     private fun updateLocation(location: Location) {
-        Log.i("Cambio-ubicacion","Se ha detectado un cambio en la ubicacion")
+        //Log.i("Cambio-ubicacion","Se ha detectado un cambio en la ubicacion")
         // Implementa la lógica para actualizar la ubicación en tu fragmento
         binding.textViewLatitude.text = "${String.format("%.6f",location.latitude)}"
         binding.textViewLongitude.text = "${String.format("%.6f",location.longitude)}"
@@ -158,6 +164,17 @@ class HomeFragment : Fragment() {
         parentFragment?.let { locationViewModel.getAllLocations().removeObservers(it.viewLifecycleOwner) }
         super.onDestroyView()
     }
+    override fun onPause() {
+        super.onPause()
+        // Detener las actualizaciones de ubicación cuando el fragmento entra en pausa
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Reiniciar las actualizaciones de ubicación cuando el fragmento vuelve a estar en primer plano
+        startLocationUpdates()
+    }
 
     companion object {
         const val MY_PERMISSIONS_REQUEST_LOCATION = 99
@@ -167,8 +184,7 @@ class HomeFragment : Fragment() {
             val locationDataList = locationEntityList.map { locationEntity ->
                 transformLocationEntityToLocationData(locationEntity)
             }
-            Log.i("Cambio-observador","Se ha detectado un cambio en el observador")
-
+            //Log.i("Cambio-observador","Se ha detectado un cambio en el observador")
             try {
                 val myLocation = Location("My Locations")
                 myLocation.latitude = currentLatitude
@@ -202,7 +218,16 @@ class HomeFragment : Fragment() {
                     // Si ya ha sido inicializado, notifica que los datos han cambiado
                     //locationListAdapter?.notifyDataSetChanged()
                     locationListAdapter?.updateData(sortedLocationList)
+                }
+                if (isButtonEnabled) {
+                    bloqueaAccion()
 
+                    binding.DivLocationsNearBy.labelLocationsNearby.setOnItemClickListener { parent, view, position, id ->
+                        val selectedLocation = sortedLocationList[position]
+                        val intent = Intent(mContext, GolpeteoActivity::class.java)
+                        intent.putExtra("location", selectedLocation)
+                        startActivity(intent)
+                    }
                 }
 
             }catch (e: Exception){
@@ -231,5 +256,14 @@ class HomeFragment : Fragment() {
             distancia = 0.0,
             orientacion = ""
         )
+    }
+
+    //Bloquear Boton de acción
+    private fun bloqueaAccion() {
+        isButtonEnabled = false
+        //Desactiva el botón durante 1 segundo para evitar doble clic
+        Handler(Looper.getMainLooper()).postDelayed({
+            isButtonEnabled = true
+        }, 1000)
     }
 }
