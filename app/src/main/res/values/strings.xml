@@ -1,8 +1,7 @@
 <resources>
-    <string name="app_name">Simgolp</string>
+    <string name="app_name">Citricos</string>
     <string name="app_version">0.0.0</string>
 
-    <string name="titleRL">SIMGOLP</string>
     <string name="app_name_developer">developed by SIAFESON</string>
 
     <string name="item_home">Inicio</string>
@@ -36,21 +35,23 @@
     <string name="textViewLabelJuntaId">Junta ID</string>
     <string name="textViewJuntaId">000</string>
 
+
+    <!--Catalogs Activity -->
+    <string name="com_msj_buscar_elemento">Buscar...</string>
+
     <!--Login Activity -->
     <string name="labelUsername">Usuario</string>
     <string name="labelPassword">Contraseña</string>
     <string name="btnLogin">Ingresar</string>
 
     <!--Golpeteo Activity -->
-    <string name="labelResource">¿Recurso de productor?</string>
+    <string name="labelResource">Recurso de productor?</string>
     <string name="labelNoAdults">Número de adultos</string>
     <string name="btnAdd">Guardar</string>
     <string name="btnSave">Finalizar</string>
 
 
-    <string name="com_msj_buscar_elemento">Buscar...</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

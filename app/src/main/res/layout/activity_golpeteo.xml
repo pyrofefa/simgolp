@@ -273,7 +273,7 @@
                     android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/editTextInput"
+                    android:id="@+id/editTextNoAdults"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textViewResult"
@@ -284,7 +284,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/editTextInput"
+                    android:layout_below="@id/editTextNoAdults"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="16dp">
 
@@ -292,7 +292,7 @@
                         android:id="@+id/textViewSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="¿Recurso de productor?"
+                        android:text="@string/labelResource"
                         android:textStyle="bold"
                         android:textSize="18sp"/>
 
@@ -305,29 +305,81 @@
 
                 </RelativeLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAdd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/btnAdd"
-                    android:background="@color/colorAccent"
+                    android:backgroundTint="@color/colorAccent"
                     android:textColor="@color/white"
-                    android:layout_marginTop="40dp"
-                    />
+                    android:layout_marginTop="40dp"/>
+
+                <LinearLayout
+                    android:id="@+id/hr2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/colorAccent"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnAdd" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:id="@+id/textViewNoPoints"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_toStartOf="@id/labelNoPoints"
+                        android:text="0"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/labelNoPoints"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Puntos"
+                        android:layout_marginStart="8dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/labelNoPoints"
+                        android:backgroundTint="@color/colorAccent"
+                        android:textColor="@color/white"
+                        android:text="ver"
+                        android:layout_marginStart="18dp" />
+
+                </RelativeLayout>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
         </ScrollView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimaryDark"
             android:text="@string/btnSave"
             android:textAlignment="center"
+            android:backgroundTint="@color/colorPrimary"
             android:enabled="false"
             android:textColor="@color/cardview_light_background"
             app:layout_constraintBottom_toBottomOf="parent"
