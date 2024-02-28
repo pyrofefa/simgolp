@@ -7,5 +7,5 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 @Dao
 interface RecordDao {
     @Insert
-    fun insertRecord(recordEntity: RecordEntity)
+    fun insertRecord(recordEntity: RecordEntity): Long
 }

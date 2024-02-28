@@ -15,7 +15,7 @@ data class RecordEntity (
     val latitud: Double,
     val accuracy: Double,
     val recurso: Int,
-    @ColumnInfo("distancia_qr") val distanciaQr: Int,
+    @ColumnInfo("distancia_qr") val distanciaQr: Double,
     @ColumnInfo("campo_id") val campoId: Int,
     val ano: String,
     val semana: String,

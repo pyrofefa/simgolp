@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.appcompat.app.AlertDialog
@@ -35,10 +36,6 @@ fun Calendar.fechaCompleta(): String{
     val date = this.time
     val fecha: String = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", espanol).format(date)
     return fecha
-}
-fun Date.fechaHoraSimple(): String{
-    val hoy: String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(this)
-    return hoy;
 }
 fun Date.fechaHoraCompleta(): String{
     val hoy: String = SimpleDateFormat("dd 'de' MMMM 'de' yyyy HH:mm:ss").format(this)
@@ -92,4 +89,42 @@ fun showProgressDialog(title: String, message: String, context: Context, style: 
     progressDialog.setCancelable(false)
     progressDialog.show()
     return progressDialog
+}
+
+fun Context.getAppVersionInfo(): Pair<String, Int> {
+    try {
+        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+        val versionName = packageInfo.versionName
+        val versionCode = packageInfo.versionCode
+        return Pair(versionName, versionCode)
+    } catch (e: PackageManager.NameNotFoundException) {
+        // Manejar la excepción según tus necesidades
+        e.printStackTrace()
+    }
+    return Pair("", 0)
+}
+
+fun Calendar.getYear(): Int = get(Calendar.YEAR)
+
+fun Calendar.getWeek(): Int = get(Calendar.WEEK_OF_YEAR)
+
+fun Calendar.getFormattedDate(): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    return dateFormat.format(time)
+}
+
+fun Calendar.getFormattedDateTime(): String {
+    val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return dateTimeFormat.format(time)
+}
+
+fun parseFecha(inputFecha: String): String {
+    // Formato de entrada
+    val formatoEntrada = SimpleDateFormat("dd 'de' MMMM 'de' yyyy HH:mm:ss", Locale.getDefault())
+    // Parsear la cadena en un objeto Date
+    val fecha = formatoEntrada.parse(inputFecha)
+    // Formato de salida
+    val formatoSalida = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    // Formatear la fecha al formato deseado
+    return fecha?.let { formatoSalida.format(it) } ?: ""
 }

@@ -6,10 +6,10 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.KeyEvent
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -25,7 +25,14 @@ import movil.siafeson.citricos.models.LocationData
 import movil.siafeson.citricos.utils.ToolBarActivity
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.fechaHoraCompleta
+import movil.siafeson.citricos.utils.getAppVersionInfo
+import movil.siafeson.citricos.utils.getFormattedDate
+import movil.siafeson.citricos.utils.getFormattedDateTime
+import movil.siafeson.citricos.utils.getWeek
+import movil.siafeson.citricos.utils.getYear
+import movil.siafeson.citricos.utils.parseFecha
 import movil.siafeson.citricos.utils.showAlertDialog
+import java.util.Calendar
 import java.util.Date
 
 class GolpeteoActivity : ToolBarActivity() {
@@ -40,7 +47,10 @@ class GolpeteoActivity : ToolBarActivity() {
     private var currentLatitude:Double = 0.0
     private var currentLongitude:Double = 0.0
     private var currentAccuracy:Double = 0.0
+    private var timeNetwork:String = ""
+    private var distanceNetwork:Double = 0.0
 
+    private var points:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +65,7 @@ class GolpeteoActivity : ToolBarActivity() {
         location = intent.getParcelableExtra("location")
         binding.tvCampo.text = location?.predio
         binding.tvGeopos.text = "${location?.latitud}, ${location?.longitud}"
-        binding.editTextNoAdults.setText("0")
+        binding.editTextNoAdults.setText(points.toString())
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal, "Golpeteo")
         enableHomeDisplay(true)
 
@@ -71,28 +81,47 @@ class GolpeteoActivity : ToolBarActivity() {
     }
 
     private fun addDetail() {
-        val record = RecordEntity(
-            userId = MyApp.preferences.userId.toString(),
-            fecha = "",
-            fechaHora = "",
-            latitud = currentLatitude,
-            longitud =  currentLongitude,
-            accuracy = currentAccuracy,
-            recurso = 1,
-            distanciaQr = 0,
-            campoId = location!!.id_bit,
-            ano = "",
-            semana = "",
-            status = 1,
-            idBdCel = 1,
-            totalArboles = 1,
-            totalAdultos = 0,
-            created = "",
-            createdSat = "",
-            modified = "",
-            version = ""
-        )
-        recordViewModel.insertRecord(record)
+        val versionInfo = getAppVersionInfo()
+        val calendar = Calendar.getInstance()
+        val year = calendar.getYear()
+        val week = calendar.getWeek()
+        val formattedDate = calendar.getFormattedDate()
+        val formattedDateTime = calendar.getFormattedDateTime()
+
+        val parseDate = parseFecha(timeNetwork)
+
+
+        if (points == 0){
+            val resourceProducer = binding.switchExample.isChecked
+            Log.i("resourceProducer","${resourceProducer}")
+            val record = RecordEntity(
+                userId = MyApp.preferences.userId.toString(),
+                fecha = formattedDate,
+                fechaHora = formattedDateTime,
+                latitud = currentLatitude,
+                longitud =  currentLongitude,
+                accuracy = currentAccuracy,
+                recurso = 1,
+                distanciaQr = distanceNetwork,
+                campoId = location!!.id_bit,
+                ano = year.toString(),
+                semana = week.toString(),
+                status = 2,
+                idBdCel = 1,
+                totalArboles = 1,
+                totalAdultos = 0,
+                created = formattedDateTime,
+                createdSat = parseDate,
+                modified = formattedDateTime,
+                version = versionInfo.first
+            )
+            val muestreoId = recordViewModel.insertRecord(record)
+            Log.i("muestreoId","${muestreoId}")
+
+        }
+
+        points++
+        binding.textViewNoPoints.text = points.toString()
     }
 
 
@@ -144,14 +173,16 @@ class GolpeteoActivity : ToolBarActivity() {
 
         val satelliteTime = Date(myLocation.time)
 
-        val timeNetwork = satelliteTime.fechaHoraCompleta()
+
+
+        timeNetwork = satelliteTime.fechaHoraCompleta()
         binding.tvFecha.text = timeNetwork
 
         val field = Location("location field")
         field.latitude = location?.latitud ?: 0.0
         field.longitude = location?.longitud ?: 0.0
 
-        val distanceNetwork = field.distanceTo(myLocation).toDouble()
+        distanceNetwork = field.distanceTo(myLocation).toDouble()
         val bear = field.bearingTo(field)
         val orientation = Utileria().getOrien(bear)
 
