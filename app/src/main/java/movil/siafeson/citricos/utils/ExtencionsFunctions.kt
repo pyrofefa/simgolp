@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import java.text.SimpleDateFormat
@@ -127,4 +128,20 @@ fun parseFecha(inputFecha: String): String {
     val formatoSalida = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     // Formatear la fecha al formato deseado
     return fecha?.let { formatoSalida.format(it) } ?: ""
+}
+
+fun showToast(context: Context, mensaje: String) {
+    Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
+}
+
+fun calculatePointsRequired(has: Int): Int {
+    return when {
+        has == 0 -> 1
+        has > 0 && has < 6.25 -> 40
+        has >= 6.25 && has < 26.25 -> 100
+        has >= 26.25 && has < 50.25 -> 140
+        has >= 50.25 && has < 75.25 -> 170
+        has >= 75.25 -> 200
+        else -> 0
+    }
 }

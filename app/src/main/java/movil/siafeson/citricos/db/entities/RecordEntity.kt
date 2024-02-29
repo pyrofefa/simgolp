@@ -20,7 +20,6 @@ data class RecordEntity (
     val ano: String,
     val semana: String,
     @ColumnInfo(name = "status") @NotNull val status: Int,
-    @ColumnInfo("id_bd_cel") val idBdCel: Int,
     @ColumnInfo("total_arboles") val totalArboles: Int,
     @ColumnInfo("total_adultos") val totalAdultos: Int,
     @ColumnInfo(name = "created") @NotNull val created: String,

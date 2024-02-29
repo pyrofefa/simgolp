@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -19,11 +20,14 @@ import movil.siafeson.citricos.R
 import movil.siafeson.citricos.app.MyApp
 import movil.siafeson.citricos.app.accurracyAlloWed
 import movil.siafeson.citricos.databinding.ActivityGolpeteoBinding
+import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.entities.RecordEntity
+import movil.siafeson.citricos.db.viewModels.DetailViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.LocationData
 import movil.siafeson.citricos.utils.ToolBarActivity
 import movil.siafeson.citricos.utils.Utileria
+import movil.siafeson.citricos.utils.calculatePointsRequired
 import movil.siafeson.citricos.utils.fechaHoraCompleta
 import movil.siafeson.citricos.utils.getAppVersionInfo
 import movil.siafeson.citricos.utils.getFormattedDate
@@ -32,6 +36,7 @@ import movil.siafeson.citricos.utils.getWeek
 import movil.siafeson.citricos.utils.getYear
 import movil.siafeson.citricos.utils.parseFecha
 import movil.siafeson.citricos.utils.showAlertDialog
+import movil.siafeson.citricos.utils.showToast
 import java.util.Calendar
 import java.util.Date
 
@@ -43,6 +48,7 @@ class GolpeteoActivity : ToolBarActivity() {
     private var isButtonEnabled = true
 
     private lateinit var recordViewModel: RecordViewModel
+    private lateinit var detailViewModel: DetailViewModel
 
     private var currentLatitude:Double = 0.0
     private var currentLongitude:Double = 0.0
@@ -51,6 +57,8 @@ class GolpeteoActivity : ToolBarActivity() {
     private var distanceNetwork:Double = 0.0
 
     private var points:Int = 0
+    private var recordId: Long? = null
+    private var parseResourceProducer:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,22 +73,47 @@ class GolpeteoActivity : ToolBarActivity() {
         location = intent.getParcelableExtra("location")
         binding.tvCampo.text = location?.predio
         binding.tvGeopos.text = "${location?.latitud}, ${location?.longitud}"
-        binding.editTextNoAdults.setText(points.toString())
+        binding.editTextNoAdults.setText("0")
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal, "Golpeteo")
         enableHomeDisplay(true)
 
+        validationHas()
         startLocationUpdates()
 
         recordViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
-
+        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
         binding.btnAdd.setOnClickListener {
-            addDetail()
+            val numberAdults = binding.editTextNoAdults.text.toString()
+            if(recordId != null){
+                if (currentAccuracy > accurracyAlloWed){
+                    showToast(this,"La precisión debe de ser menor a ${accurracyAlloWed.toInt()} para poder guardar el registro")
+                }else if (numberAdults.isEmpty()){
+                    showToast(this,"Debe ingresar número de adultos")
+                }else{
+                    addDetail(recordId!!)
+                }
+            }
+            else{
+                if (currentAccuracy > accurracyAlloWed){
+                    showToast(this,"La precisión debe de ser menor a ${accurracyAlloWed.toInt()} para poder guardar el registro")
+                }else if (numberAdults.isEmpty()){
+                    showToast(this,"Debe ingresar número de adultos")
+                }
+                else{
+                    addRecord()
+                }
+            }
         }
-
     }
 
-    private fun addDetail() {
+    private fun validationHas() {
+        val ha = location?.superficie?.toInt()
+        val pointsRequired = ha?.let { calculatePointsRequired(it)} ?: 0
+        binding.labelHas.text = "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
+    }
+
+    private fun addRecord() {
         val versionInfo = getAppVersionInfo()
         val calendar = Calendar.getInstance()
         val year = calendar.getYear()
@@ -89,42 +122,67 @@ class GolpeteoActivity : ToolBarActivity() {
         val formattedDateTime = calendar.getFormattedDateTime()
 
         val parseDate = parseFecha(timeNetwork)
+        val resourceProducer = binding.switchExample.isChecked
 
-
-        if (points == 0){
-            val resourceProducer = binding.switchExample.isChecked
-            Log.i("resourceProducer","${resourceProducer}")
-            val record = RecordEntity(
-                userId = MyApp.preferences.userId.toString(),
-                fecha = formattedDate,
-                fechaHora = formattedDateTime,
-                latitud = currentLatitude,
-                longitud =  currentLongitude,
-                accuracy = currentAccuracy,
-                recurso = 1,
-                distanciaQr = distanceNetwork,
-                campoId = location!!.id_bit,
-                ano = year.toString(),
-                semana = week.toString(),
-                status = 2,
-                idBdCel = 1,
-                totalArboles = 1,
-                totalAdultos = 0,
-                created = formattedDateTime,
-                createdSat = parseDate,
-                modified = formattedDateTime,
-                version = versionInfo.first
-            )
-            val muestreoId = recordViewModel.insertRecord(record)
-            Log.i("muestreoId","${muestreoId}")
-
+        if(resourceProducer){
+            parseResourceProducer = 1
+        }else{
+            parseResourceProducer = 0
         }
 
-        points++
+        val record = RecordEntity(
+            userId = MyApp.preferences.userId.toString(),
+            fecha = formattedDate,
+            fechaHora = formattedDateTime,
+            latitud = currentLatitude,
+            longitud =  currentLongitude,
+            accuracy = currentAccuracy,
+            recurso = parseResourceProducer,
+            distanciaQr = distanceNetwork,
+            campoId = location!!.id_bit,
+            ano = year.toString(),
+            semana = week.toString(),
+            status = 2,
+            totalArboles = 1,
+            totalAdultos = 0,
+            created = formattedDateTime,
+            createdSat = parseDate,
+            modified = formattedDateTime,
+            version = versionInfo.first
+        )
+        recordViewModel.insertRecord(record)
+        recordViewModel.insertedRecordId.observe(this, Observer { res ->
+            if (res != null) {
+                recordId = res
+                addDetail(recordId!!)
+            } else {
+                showToast(this, "Ocurrió un error al agregar punto")
+            }
+        })
         binding.textViewNoPoints.text = points.toString()
     }
 
+    private fun addDetail(id: Long) {
+        val calendar = Calendar.getInstance()
+        val formattedDateTime = calendar.getFormattedDateTime()
 
+        val numberAdults = binding.editTextNoAdults.text.toString()
+
+        val detail = DetailEntity(
+            punto = points,
+            longitud = currentLongitude,
+            latitud = currentLatitude,
+            accuracy = currentAccuracy,
+            distanciaQr = distanceNetwork,
+            status = 2,
+            muestreoId = id.toInt(),
+            adultos = numberAdults.toInt(),
+            fecha = formattedDateTime
+        )
+        detailViewModel.insertDetail(detail)
+        points++
+        binding.textViewNoPoints.text = points.toString()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -172,8 +230,6 @@ class GolpeteoActivity : ToolBarActivity() {
         currentAccuracy = myLocation.accuracy.toDouble()
 
         val satelliteTime = Date(myLocation.time)
-
-
 
         timeNetwork = satelliteTime.fechaHoraCompleta()
         binding.tvFecha.text = timeNetwork

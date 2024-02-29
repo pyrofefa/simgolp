@@ -14,7 +14,6 @@ data class DetailEntity(
     @ColumnInfo("distancia_qr") val distanciaQr: Double,
     val status: Int,
     @ColumnInfo("muestreo_id") val muestreoId: Int,
-    @ColumnInfo("id_bd_cel") val idBdCel: Int,
     val adultos: Int,
     val fecha: String
 )
