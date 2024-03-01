@@ -6,7 +6,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.KeyEvent
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -83,6 +82,9 @@ class GolpeteoActivity : ToolBarActivity() {
         recordViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
+        getRecordId()
+
+        //Agregar punto
         binding.btnAdd.setOnClickListener {
             val numberAdults = binding.editTextNoAdults.text.toString()
             if(recordId != null){
@@ -107,6 +109,25 @@ class GolpeteoActivity : ToolBarActivity() {
         }
     }
 
+    private fun getRecordId() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.getYear()
+        val week = calendar.getWeek()
+        recordViewModel.getRecordId(location!!.id_bit,week,year)
+        recordViewModel.recordId.observe(this, Observer { res ->
+            res?.map { detail ->
+                if (detail.id > 0){
+                    recordId = detail.id.toLong()
+                    points = detail.punto
+                    binding.textViewNoPoints.text = points.toString()
+                    if (detail.recurso == 1){
+                        binding.switchResource.isChecked = true
+                    }
+                }
+            }
+        })
+    }
+
     private fun validationHas() {
         val ha = location?.superficie?.toInt()
         val pointsRequired = ha?.let { calculatePointsRequired(it)} ?: 0
@@ -122,7 +143,7 @@ class GolpeteoActivity : ToolBarActivity() {
         val formattedDateTime = calendar.getFormattedDateTime()
 
         val parseDate = parseFecha(timeNetwork)
-        val resourceProducer = binding.switchExample.isChecked
+        val resourceProducer = binding.switchResource.isChecked
 
         if(resourceProducer){
             parseResourceProducer = 1
@@ -220,7 +241,7 @@ class GolpeteoActivity : ToolBarActivity() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
     private fun updateLocation(myLocation: Location) {
-        // Implementa la lógica para actualizar la ubicación en tu fragmento
+        // Implementa la lógica para actualizar la ubicación en el fragmento
         binding.tvPosLlat.text = "${String.format("%.6f",myLocation.latitude)}"
         binding.tvPosLon.text = "${String.format("%.6f",myLocation.longitude)}"
         binding.tvPosAcc.text = "${String.format("%.2f",myLocation.accuracy)}"
@@ -235,6 +256,7 @@ class GolpeteoActivity : ToolBarActivity() {
         binding.tvFecha.text = timeNetwork
 
         val field = Location("location field")
+
         field.latitude = location?.latitud ?: 0.0
         field.longitude = location?.longitud ?: 0.0
 
@@ -251,20 +273,7 @@ class GolpeteoActivity : ToolBarActivity() {
 
     }
     override fun onSupportNavigateUp(): Boolean {
-        showAlertDialog(
-            "¡Atención!",
-            "Dejará un registro pendiente de terminar, para el campo: ${location?.predio} ¿Desea continuar?",
-            this,
-            "Si",
-            positiveButtonAction = {
-                onBackPressed()
-            },
-            "Cancelar"
-        )
-        return true
-    }
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (points > 0) {
             showAlertDialog(
                 "¡Atención!",
                 "Dejará un registro pendiente de terminar, para el campo: ${location?.predio} ¿Desea continuar?",
@@ -275,7 +284,26 @@ class GolpeteoActivity : ToolBarActivity() {
                 },
                 "Cancelar"
             )
-            return true
+        }else{
+            onBackPressed()
+        }
+        return true
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (points > 0) {
+                showAlertDialog(
+                    "¡Atención!",
+                    "Dejará un registro pendiente de terminar, para el campo: ${location?.predio} ¿Desea continuar?",
+                    this,
+                    "Si",
+                    positiveButtonAction = {
+                        onBackPressed()
+                    },
+                    "Cancelar"
+                )
+                return true
+            }
         }
         return super.onKeyDown(keyCode, event)
     }

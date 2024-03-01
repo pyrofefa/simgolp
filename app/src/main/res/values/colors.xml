@@ -10,6 +10,10 @@
     <color name="colorWarning">#ffc409</color>
 
 
+    <color name="pendiente">#D50000</color>
+    <color name="enviado">#33691e</color>
+    <color name="porenviar">#c7b800</color>
+
     <!-- LOGO COLOR -->
 
     <!-- BOTON INACTIVO -->

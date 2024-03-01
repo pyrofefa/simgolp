@@ -29,9 +29,13 @@ import movil.siafeson.citricos.app.distanceAllowed
 import movil.siafeson.citricos.databinding.FragmentHomeBinding
 import movil.siafeson.citricos.db.entities.LocationEntity
 import movil.siafeson.citricos.db.viewModels.LocationViewModel
+import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.LocationData
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.fechaCompleta
+import movil.siafeson.citricos.utils.getFormattedDate
+import movil.siafeson.citricos.utils.getWeek
+import movil.siafeson.citricos.utils.getYear
 import movil.siafeson.citricos.utils.nombreDiaActual
 import java.util.Calendar
 
@@ -42,6 +46,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var locationViewModel: LocationViewModel
     private var locationListAdapter: LocationListAdapter? = null
+    private lateinit var recordViewModel: RecordViewModel
 
     private var isButtonEnabled = true
 
@@ -87,9 +92,20 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
         val view = binding.root
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        recordViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
+        countRecords()
         binding.textViewDay.text = Calendar.getInstance().nombreDiaActual()
         binding.textViewCompleteDay.text = Calendar.getInstance().fechaCompleta()
         return view
+    }
+
+    private fun countRecords() {
+        val calendar = Calendar.getInstance()
+        val formattedDate = calendar.getFormattedDate()
+        recordViewModel.getCountRecords(formattedDate)
+        recordViewModel.countRecords.observe(viewLifecycleOwner, Observer { res->
+            binding.tvTotRegistros.text = res.toString()
+        })
     }
 
     private fun startLocationUpdates() {

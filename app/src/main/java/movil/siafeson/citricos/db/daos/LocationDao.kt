@@ -19,4 +19,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM ubicaciones ORDER BY predio")
     fun getOrderedElements(): List<LocationEntity>
+
+
+
 }

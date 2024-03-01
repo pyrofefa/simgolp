@@ -1,60 +1,92 @@
 package movil.siafeson.citricos.fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.citricos.R
+import movil.siafeson.citricos.adapters.RecordsAdapter
+import movil.siafeson.citricos.databinding.FragmentRegistersBinding
+import movil.siafeson.citricos.db.entities.RecordEntity
+import movil.siafeson.citricos.db.viewModels.RecordViewModel
+import movil.siafeson.citricos.models.RecordData
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [RegistersFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegistersFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var mContext: Context
+    private lateinit var binding: FragmentRegistersBinding
+    private lateinit var recordsViewModel: RecordViewModel
+    private lateinit var recordsAdapter: RecordsAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun onAttach(context: Context) {
+        mContext = context
+        super.onAttach(context)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_registers, container, false)
+        setHasOptionsMenu(true)
+        binding = FragmentRegistersBinding.inflate(inflater,container,false)
+        recordsViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
+        loadRecords()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegistersFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegistersFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun loadRecords() {
+        recordsViewModel.getAllRecords().observe(viewLifecycleOwner, Observer {
+            recordsEntityList->
+            val recordsDataList = recordsEntityList.map { recordsEntity ->
+                transformRecordEntityToData(recordsEntity)
             }
+            Log.i("records","${recordsDataList}")
+            recordsAdapter = RecordsAdapter(mContext, R.layout.list_records,recordsDataList)
+            binding.DivRegsMuestreos.lvRegMuestreo.adapter = recordsAdapter
+
+            if (recordsDataList.isEmpty()) {
+                binding.DivRegsMuestreos.lblNoHayUbicaciones.visibility = View.VISIBLE
+                binding.DivRegsMuestreos.ivLogoNoHay.visibility = View.VISIBLE
+            } else {
+                binding.DivRegsMuestreos.lblNoHayUbicaciones.visibility = View.INVISIBLE
+                binding.DivRegsMuestreos.ivLogoNoHay.visibility = View.INVISIBLE
+            }
+
+        })
     }
+
+    private fun transformRecordEntityToData(recordsEntity: RecordEntity): RecordData {
+        return RecordData(
+            id = recordsEntity.id,
+            userId = recordsEntity.userId,
+            fecha = recordsEntity.fecha,
+            fechaHora = recordsEntity.fechaHora,
+            longitud = recordsEntity.longitud,
+            latitud = recordsEntity.latitud,
+            accuracy = recordsEntity.accuracy,
+            recurso = recordsEntity.recurso,
+            distanciaQr = recordsEntity.distanciaQr,
+            campoId = recordsEntity.campoId,
+            ano = recordsEntity.ano,
+            semana = recordsEntity.semana,
+            status = recordsEntity.status,
+            totalArboles = recordsEntity.totalArboles,
+            totalAdultos = recordsEntity.totalAdultos
+
+        )
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recordsViewModel.getRecordsPending()
+        recordsViewModel.recordPending.observe(viewLifecycleOwner, Observer { res ->
+            binding.tvNumeroRegistrosFaltantes.text = res.toString()
+        })
+    }
+
 }

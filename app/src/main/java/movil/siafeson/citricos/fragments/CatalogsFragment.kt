@@ -10,12 +10,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.activities.LocationsActivity
 import movil.siafeson.citricos.adapters.CatalogsAdapter
 import movil.siafeson.citricos.databinding.FragmentCatalogsBinding
 import movil.siafeson.citricos.db.viewModels.LocationViewModel
+import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.CatalogData
 import movil.siafeson.citricos.utils.goToActivity
 import movil.siafeson.citricos.utils.isOnlineNet
@@ -26,6 +28,7 @@ class CatalogsFragment : Fragment() {
 
     private lateinit var locationViewModel: LocationViewModel
     private var locationListAdapter: CatalogsAdapter? = null
+
 
     private val available = ArrayList<CatalogData>()
     private var size:Int = 0
