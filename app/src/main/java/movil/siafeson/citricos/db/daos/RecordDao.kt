@@ -31,7 +31,7 @@ interface RecordDao {
     @Query("SELECT COUNT(*) FROM muestreo WHERE status = 2")
     fun getCountRecordsPending() : Long
 
-    @Query("SELECT * FROM muestreo")
+    @Query("SELECT * FROM muestreo ORDER BY fecha_hora DESC")
     suspend fun getAllRecords(): List<RecordEntity>
 }
 

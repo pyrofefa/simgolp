@@ -13,6 +13,7 @@ import movil.siafeson.citricos.R
 import movil.siafeson.citricos.adapters.RecordsAdapter
 import movil.siafeson.citricos.databinding.FragmentRegistersBinding
 import movil.siafeson.citricos.db.entities.RecordEntity
+import movil.siafeson.citricos.db.viewModels.LocationViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.RecordData
 
@@ -21,6 +22,7 @@ class RegistersFragment : Fragment() {
     private lateinit var mContext: Context
     private lateinit var binding: FragmentRegistersBinding
     private lateinit var recordsViewModel: RecordViewModel
+    private lateinit var locationViewModel: LocationViewModel
     private lateinit var recordsAdapter: RecordsAdapter
 
     override fun onAttach(context: Context) {
@@ -33,6 +35,7 @@ class RegistersFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         binding = FragmentRegistersBinding.inflate(inflater,container,false)
+        locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         recordsViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
         loadRecords()
         return binding.root
@@ -45,7 +48,7 @@ class RegistersFragment : Fragment() {
                 transformRecordEntityToData(recordsEntity)
             }
             Log.i("records","${recordsDataList}")
-            recordsAdapter = RecordsAdapter(mContext, R.layout.list_records,recordsDataList)
+            recordsAdapter = RecordsAdapter(mContext, R.layout.list_records,recordsDataList,locationViewModel)
             binding.DivRegsMuestreos.lvRegMuestreo.adapter = recordsAdapter
 
             if (recordsDataList.isEmpty()) {

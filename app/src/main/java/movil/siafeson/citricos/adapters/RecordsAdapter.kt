@@ -1,18 +1,30 @@
 package movil.siafeson.citricos.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.databinding.ListRecordsBinding
+import movil.siafeson.citricos.db.viewModels.LocationViewModel
 import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.utils.getFormattedDateTime
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 class RecordsAdapter(
     private val context: Context,
     val layout: Int,
-    private var data: List<RecordData>
+    private var data: List<RecordData>,
+    private var application: LocationViewModel
 ) : BaseAdapter() {
 
     override fun getCount(): Int {
@@ -35,8 +47,17 @@ class RecordsAdapter(
         }else {
             binding = ListRecordsBinding.bind(p1)
         }
-        binding.listRegName.text = this.data[p0].campoId.toString()
 
+        val field = application?.getLocation(this.data[p0].campoId)
+
+        //binding.listRegName.text = field.toString()
+
+
+        binding.listRegCreacion.text = this.data[p0].fechaHora
+        val calendar: Calendar = Calendar.getInstance()
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        calendar.setTime(sdf.parse("${data[p0].fechaHora}"))
+        binding.listRegCreacion.text = "${calendar.getFormattedDateTime()}"
         binding.listRegId.text = "${this.data[p0].id}"
         if (this.data[p0].status == 1) {
             binding.listRegStatus.text = "Enviado"
