@@ -25,10 +25,4 @@ class LocationRepository(private val locationDao: LocationDao) {
             locationDao.deleteLocation()
         }
     }
-    suspend fun getLocation(id: Int): String? {
-        return withContext(Dispatchers.IO){
-            locationDao.getLocation(id)
-        }
-    }
-
 }

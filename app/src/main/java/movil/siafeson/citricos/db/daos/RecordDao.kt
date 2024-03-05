@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.models.RecordIdData
+import movil.siafeson.citricos.models.RecordsData
 
 @Dao
 interface RecordDao {
@@ -31,8 +32,15 @@ interface RecordDao {
     @Query("SELECT COUNT(*) FROM muestreo WHERE status = 2")
     fun getCountRecordsPending() : Long
 
-    @Query("SELECT * FROM muestreo ORDER BY fecha_hora DESC")
-    suspend fun getAllRecords(): List<RecordEntity>
+    @Query("SELECT " +
+            "muestreo.id, " +
+            "muestreo.fecha_hora as fecha,  " +
+            "muestreo.status, " +
+            "ubicaciones.predio " +
+            "FROM muestreo INNER JOIN ubicaciones ON muestreo.campo_id = ubicaciones.idBit " +
+            "ORDER BY datetime(muestreo.fecha_hora) " +
+            "DESC")
+    suspend fun getAllRecords(): List<RecordsData>
 }
 
 

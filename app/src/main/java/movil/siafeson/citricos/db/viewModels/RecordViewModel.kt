@@ -13,6 +13,7 @@ import movil.siafeson.citricos.app.DatabaseSingleton
 import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.repositories.RecordRepository
 import movil.siafeson.citricos.models.RecordIdData
+import movil.siafeson.citricos.models.RecordsData
 
 class RecordViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: RecordRepository = RecordRepository(DatabaseSingleton.db.recordDao())
@@ -83,7 +84,7 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getAllRecords(): LiveData<List<RecordEntity>> {
+    fun getAllRecords(): LiveData<List<RecordsData>> {
         return liveData(Dispatchers.IO) {
             val locations = repository.getAllRecords()
             emit(locations)

@@ -16,6 +16,7 @@ import movil.siafeson.citricos.R
 import movil.siafeson.citricos.databinding.ListRecordsBinding
 import movil.siafeson.citricos.db.viewModels.LocationViewModel
 import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.models.RecordsData
 import movil.siafeson.citricos.utils.getFormattedDateTime
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -23,8 +24,7 @@ import java.util.Calendar
 class RecordsAdapter(
     private val context: Context,
     val layout: Int,
-    private var data: List<RecordData>,
-    private var application: LocationViewModel
+    private var data: List<RecordsData>,
 ) : BaseAdapter() {
 
     override fun getCount(): Int {
@@ -47,18 +47,15 @@ class RecordsAdapter(
         }else {
             binding = ListRecordsBinding.bind(p1)
         }
+        binding.listRegName.text = this.data[p0].predio
 
-        val field = application?.getLocation(this.data[p0].campoId)
-
-        //binding.listRegName.text = field.toString()
-
-
-        binding.listRegCreacion.text = this.data[p0].fechaHora
         val calendar: Calendar = Calendar.getInstance()
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        calendar.setTime(sdf.parse("${data[p0].fechaHora}"))
+        calendar.setTime(sdf.parse("${data[p0].fecha}"))
         binding.listRegCreacion.text = "${calendar.getFormattedDateTime()}"
+
         binding.listRegId.text = "${this.data[p0].id}"
+
         if (this.data[p0].status == 1) {
             binding.listRegStatus.text = "Enviado"
             binding.listRegStatus.setTextColor(context.resources.getColor(R.color.enviado))

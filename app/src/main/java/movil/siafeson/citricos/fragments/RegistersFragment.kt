@@ -16,6 +16,7 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.viewModels.LocationViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.models.RecordsData
 
 
 class RegistersFragment : Fragment() {
@@ -43,45 +44,18 @@ class RegistersFragment : Fragment() {
 
     private fun loadRecords() {
         recordsViewModel.getAllRecords().observe(viewLifecycleOwner, Observer {
-            recordsEntityList->
-            val recordsDataList = recordsEntityList.map { recordsEntity ->
-                transformRecordEntityToData(recordsEntity)
-            }
-            Log.i("records","${recordsDataList}")
-            recordsAdapter = RecordsAdapter(mContext, R.layout.list_records,recordsDataList,locationViewModel)
+            recordsList->
+            recordsAdapter = RecordsAdapter(mContext, R.layout.list_records,recordsList)
             binding.DivRegsMuestreos.lvRegMuestreo.adapter = recordsAdapter
 
-            if (recordsDataList.isEmpty()) {
+            if (recordsList.isEmpty()) {
                 binding.DivRegsMuestreos.lblNoHayUbicaciones.visibility = View.VISIBLE
                 binding.DivRegsMuestreos.ivLogoNoHay.visibility = View.VISIBLE
             } else {
                 binding.DivRegsMuestreos.lblNoHayUbicaciones.visibility = View.INVISIBLE
                 binding.DivRegsMuestreos.ivLogoNoHay.visibility = View.INVISIBLE
             }
-
         })
-    }
-
-    private fun transformRecordEntityToData(recordsEntity: RecordEntity): RecordData {
-        return RecordData(
-            id = recordsEntity.id,
-            userId = recordsEntity.userId,
-            fecha = recordsEntity.fecha,
-            fechaHora = recordsEntity.fechaHora,
-            longitud = recordsEntity.longitud,
-            latitud = recordsEntity.latitud,
-            accuracy = recordsEntity.accuracy,
-            recurso = recordsEntity.recurso,
-            distanciaQr = recordsEntity.distanciaQr,
-            campoId = recordsEntity.campoId,
-            ano = recordsEntity.ano,
-            semana = recordsEntity.semana,
-            status = recordsEntity.status,
-            totalArboles = recordsEntity.totalArboles,
-            totalAdultos = recordsEntity.totalAdultos
-
-        )
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

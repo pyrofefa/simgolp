@@ -190,6 +190,7 @@ class HomeFragment : Fragment() {
         super.onResume()
         // Reiniciar las actualizaciones de ubicación cuando el fragmento vuelve a estar en primer plano
         startLocationUpdates()
+        countRecords()
     }
 
     companion object {
@@ -232,12 +233,10 @@ class HomeFragment : Fragment() {
                     binding.DivLocationsNearBy.labelLocationsNearby.adapter = locationListAdapter
                 } else {
                     // Si ya ha sido inicializado, notifica que los datos han cambiado
-                    //locationListAdapter?.notifyDataSetChanged()
                     locationListAdapter?.updateData(sortedLocationList)
                 }
                 if (isButtonEnabled) {
                     bloqueaAccion()
-
                     binding.DivLocationsNearBy.labelLocationsNearby.setOnItemClickListener { parent, view, position, id ->
                         val selectedLocation = sortedLocationList[position]
                         val intent = Intent(mContext, GolpeteoActivity::class.java)

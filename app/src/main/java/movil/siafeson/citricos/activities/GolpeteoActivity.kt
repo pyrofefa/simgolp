@@ -1,6 +1,7 @@
 package movil.siafeson.citricos.activities
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -106,6 +107,11 @@ class GolpeteoActivity : ToolBarActivity() {
                     addRecord()
                 }
             }
+        }
+        binding.btnView.setOnClickListener {
+            val intent = Intent(this@GolpeteoActivity, DetailsActivity::class.java)
+            intent.putExtra("muestreo_id", recordId)
+            startActivity(intent)
         }
     }
 

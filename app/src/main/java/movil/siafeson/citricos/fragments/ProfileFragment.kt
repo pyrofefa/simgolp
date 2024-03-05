@@ -44,7 +44,6 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(layoutInflater,container,false)
         setHasOptionsMenu(true)
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-
         return binding.root
     }
 

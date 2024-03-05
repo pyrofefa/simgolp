@@ -36,13 +36,4 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             repository.deleteLocations()
         }
     }
-    fun getLocation(id:Int){
-        viewModelScope.launch {
-            try {
-                repository.getLocation(id)
-            }catch (e: Exception){
-                null
-            }
-        }
-    }
 }

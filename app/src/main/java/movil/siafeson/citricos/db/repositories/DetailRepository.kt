@@ -11,4 +11,9 @@ class DetailRepository(private val detailDao: DetailDao) {
             detailDao.insertDetail(detail)
         }
     }
+    suspend fun getDetailsRecord(id: Int): List<DetailEntity>{
+        return withContext(Dispatchers.IO){
+            detailDao.getDetailsRecord(id)
+        }
+    }
 }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.db.daos.RecordDao
 import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.models.RecordIdData
+ import movil.siafeson.citricos.models.RecordsData
 
 class RecordRepository(private val recordDao: RecordDao){
 
@@ -45,7 +46,7 @@ class RecordRepository(private val recordDao: RecordDao){
             }
         }
     }
-    suspend fun getAllRecords(): List<RecordEntity>{
+    suspend fun getAllRecords(): List<RecordsData>{
         return withContext(Dispatchers.IO){
             recordDao.getAllRecords()
         }
