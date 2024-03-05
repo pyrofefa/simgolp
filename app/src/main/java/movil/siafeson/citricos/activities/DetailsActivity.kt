@@ -1,18 +1,16 @@
 package movil.siafeson.citricos.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import androidx.lifecycle.ViewModelProvider
 import movil.siafeson.citricos.databinding.ActivityDetailsBinding
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
-import movil.siafeson.citricos.models.LocationData
 import movil.siafeson.citricos.utils.ToolBarActivity
 
 class DetailsActivity : ToolBarActivity() {
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var detailViewModel: DetailViewModel
-    private var location: LocationData? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val intent = intent
@@ -25,8 +23,14 @@ class DetailsActivity : ToolBarActivity() {
 
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
-        location = intent.getParcelableExtra("muestreo_id")
+        val recordId = intent.getLongExtra("muestreo_id", 0)
 
+        getDetails(recordId)
+
+    }
+
+    private fun getDetails(recordId: Long) {
+        detailViewModel.getDetailsRecord(recordId.toInt())
     }
 
     //Metodos para regresar

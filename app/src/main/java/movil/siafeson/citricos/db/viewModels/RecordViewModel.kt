@@ -90,5 +90,4 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
             emit(locations)
         }
     }
-
 }
