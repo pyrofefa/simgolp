@@ -12,4 +12,7 @@ interface DetailDao {
 
     @Query("SELECT * FROM detalles WHERE muestreo_id = :id")
     fun getDetailsRecord(id: Int): List<DetailEntity>
+
+    @Query("DELETE FROM detalles WHERE id = :id")
+    fun deleteDetail(id: Int)
 }

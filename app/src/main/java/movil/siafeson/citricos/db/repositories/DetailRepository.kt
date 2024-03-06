@@ -16,4 +16,8 @@ class DetailRepository(private val detailDao: DetailDao) {
             detailDao.getDetailsRecord(id)
         }
     }
+
+    fun deleteDetail(id: Int) {
+
+    }
 }

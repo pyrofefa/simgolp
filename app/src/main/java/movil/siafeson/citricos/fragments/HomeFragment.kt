@@ -237,7 +237,7 @@ class HomeFragment : Fragment() {
                 }
                 if (isButtonEnabled) {
                     bloqueaAccion()
-                    binding.DivLocationsNearBy.labelLocationsNearby.setOnItemClickListener { parent, view, position, id ->
+                    binding.DivLocationsNearBy.labelLocationsNearby.setOnItemClickListener { _, _, position, _ ->
                         val selectedLocation = sortedLocationList[position]
                         val intent = Intent(mContext, GolpeteoActivity::class.java)
                         intent.putExtra("location", selectedLocation)
