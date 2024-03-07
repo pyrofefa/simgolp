@@ -18,8 +18,7 @@ import movil.siafeson.citricos.models.DetailData
 class DetailViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DetailRepository = DetailRepository(DatabaseSingleton.db.detailDao())
 
-    private val _listaDeItems = MutableLiveData<List<DetailData>>()
-    val listaDeItems: LiveData<List<DetailData>> get() = _listaDeItems
+    private val _detailsList = MutableLiveData<List<DetailData>>()
 
     init {
         Log.i("DetailViewModel","ViewModel Creado")
