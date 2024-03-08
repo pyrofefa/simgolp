@@ -1,0 +1,58 @@
+<!-- footer_layout.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/footerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- TextView 1 -->
+    <TextView
+        android:id="@+id/labelTotalPoints"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textColor="@color/colorAccent"
+        android:text="Totales:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewTotal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- TextView 2 -->
+    <TextView
+        android:id="@+id/textViewTotal"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textColor="@color/colorAccent"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/labelTotalPoints"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- TextView 3 -->
+    <TextView
+        android:id="@+id/labelAdults"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Adultos:"
+        android:textColor="@color/pendiente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textView4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelTotalPoints" />
+
+    <!-- TextView 4 -->
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/pendiente"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/labelAdults"
+        app:layout_constraintTop_toBottomOf="@id/textViewTotal" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

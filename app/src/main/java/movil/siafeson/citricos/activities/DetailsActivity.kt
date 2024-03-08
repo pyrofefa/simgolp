@@ -2,26 +2,24 @@ package movil.siafeson.citricos.activities
 
 import DetailsAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.widget.ListView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import movil.siafeson.citricos.R
 import movil.siafeson.citricos.databinding.ActivityDetailsBinding
 import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
-import movil.siafeson.citricos.interfaces.DetailDelete
+import movil.siafeson.citricos.interfaces.DetailInterface
 import movil.siafeson.citricos.models.DetailData
 import movil.siafeson.citricos.utils.ToolBarActivity
+import movil.siafeson.citricos.utils.showToast
 
-class DetailsActivity : ToolBarActivity(), DetailDelete {
+class DetailsActivity : ToolBarActivity(), DetailInterface {
 
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var listView: ListView
+    private var noAdults = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,25 +27,33 @@ class DetailsActivity : ToolBarActivity(), DetailDelete {
         setContentView(binding.root)
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal, "Detalle")
         enableHomeDisplay(true)
-
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         listView = binding.divDetails
-
         getDetails()
     }
 
     private fun getDetails() {
         val recordId = intent.getLongExtra("muestreo_id", 0)
         detailViewModel.getDetailsRecord(recordId.toInt()).observe(this, Observer { detailsEntityList ->
-            Log.i("detailsEntityList","${detailsEntityList}")
-            Log.i("Cambio-observador","Se ha detectado un cambio en el observador")
+            //Log.i("detailsEntityList","${detailsEntityList}")
+            //Log.i("Cambio-observador","Se ha detectado un cambio en el observador")
             val detailsDataList = detailsEntityList.map {  detailsEntity ->
                 transformData(detailsEntity)
+            }
+
+            detailsDataList.forEach { data->
+                if (data.adultos > 0){
+                    noAdults += data.adultos
+                }
             }
 
             // Configura el adaptador con los detalles de datos
             val adapter = DetailsAdapter(this,detailViewModel, detailsDataList,this)
             listView.adapter = adapter
+
+            val totalPoints = detailsDataList.size
+            binding.footerLayout.textViewTotal.text = totalPoints.toString()
+            binding.footerLayout.textView4.text = noAdults.toString()
 
             adapter.updateData(detailsDataList)
         })
@@ -82,9 +88,20 @@ class DetailsActivity : ToolBarActivity(), DetailDelete {
     }
 
     override fun onItemDelete(itemId: Int) {
-        Log.i("itemId:","${itemId}")
-        detailViewModel.deleteDetail(itemId)
-        getDetails()
+        detailViewModel.deleteDetail(itemId).observe(this, Observer {
+            noAdults = 0
+            getDetails()
+            showToast(this,"Registro eliminado")
+
+        })
+    }
+
+    override fun onItemEdit(itemId: Int, adults: Int) {
+        detailViewModel.editDetail(itemId,adults).observe(this, Observer {
+            noAdults = 0
+            getDetails()
+            showToast(this,"Registro modificado")
+        })
     }
 }
 

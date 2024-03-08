@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import movil.siafeson.citricos.databinding.ListDetailsBinding
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
-import movil.siafeson.citricos.interfaces.DetailDelete
+import movil.siafeson.citricos.interfaces.DetailInterface
 import movil.siafeson.citricos.models.DetailData
 import movil.siafeson.citricos.utils.showAlertDialog
+import movil.siafeson.citricos.utils.showToast
 
 class DetailsAdapter(
     private val context: Context,
     private val viewModel: DetailViewModel,
     private var data: List<DetailData>,
-    private val onItemDeleteListener: DetailDelete
+    private val onItemListener: DetailInterface
 ) : BaseAdapter() {
-
-    private var dataEmpty: List<DetailData> = emptyList()
 
     override fun getCount(): Int {
         return data.size
@@ -42,14 +41,19 @@ class DetailsAdapter(
 
         // Acceder directamente a las vistas utilizando el binding
         val item = getItem(position) as DetailData
-        binding.editTextNoAdults.setText(item.id.toString())
+        binding.editTextNoAdults.setText(item.adultos.toString())
+
+        //Poner el cursor al final del texto
+        binding.editTextNoAdults.setSelection(item.adultos.toString().length)
+
         binding.btnEdit.setOnClickListener {
             // Lógica para editar el item (usando item.id)
-            val noAdults = item.adultos.toString()
+            val noAdults = binding.editTextNoAdults.text.toString()
+            // Mueve el cursor al final del texto
             if (noAdults.isEmpty()){
-
+                showToast(context,"Debe ingresar número de adultos")
             }else{
-
+                onItemListener.onItemEdit(item.id.toInt(), noAdults.toInt())
             }
         }
         binding.btnDelete.setOnClickListener {
@@ -59,8 +63,7 @@ class DetailsAdapter(
                 context,
                 "Si",
                 positiveButtonAction = {
-                    viewModel.deleteDetail(item.id.toInt())
-                    onItemDeleteListener.onItemDelete(item.id.toInt())
+                    onItemListener.onItemDelete(item.id.toInt())
                 },
                 "No"
             )
@@ -71,8 +74,6 @@ class DetailsAdapter(
     }
     fun updateData(newData: List<DetailData>) {
         data = newData
-        Log.i("Entrando a updateData","${data}")
-
         notifyDataSetChanged()
     }
 }

@@ -1,21 +1,12 @@
 package movil.siafeson.citricos.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.databinding.ListRecordsBinding
-import movil.siafeson.citricos.db.viewModels.LocationViewModel
-import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordsData
 import movil.siafeson.citricos.utils.getFormattedDateTime
 import java.text.SimpleDateFormat

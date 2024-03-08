@@ -23,4 +23,10 @@ class DetailRepository(private val detailDao: DetailDao) {
         }
     }
 
+    suspend fun editDetail(id: Int, adults: Int){
+        return withContext(Dispatchers.IO){
+            detailDao.editDetail(id, adults)
+        }
+    }
+
 }

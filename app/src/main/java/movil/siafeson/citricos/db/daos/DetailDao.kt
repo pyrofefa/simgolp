@@ -15,4 +15,7 @@ interface DetailDao {
 
     @Query("DELETE FROM detalles WHERE id = :id")
     fun deleteDetail(id: Int)
+
+    @Query("UPDATE detalles SET adultos = :adults WHERE id = :id")
+    fun editDetail(id: Int, adults: Int)
 }

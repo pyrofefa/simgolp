@@ -7,7 +7,12 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -113,6 +118,21 @@ class GolpeteoActivity : ToolBarActivity() {
             intent.putExtra("muestreo_id", recordId)
             startActivity(intent)
         }
+
+        // Variable para controlar si el contenido ya se borró al obtener el foco
+        val contentDelete = false
+        val editText = binding.editTextNoAdults
+        editText.setOnTouchListener{ _, event ->
+            if (event.action == MotionEvent.ACTION_UP){
+                // Obtén el valor actual del EditText
+                val valueText = editText.text.toString()
+                // Borra el contenido si es "0" y aún no se ha borrado
+                if (valueText == "0" && !contentDelete){
+                    editText.text.clear()
+                }
+            }
+            false
+        }
     }
 
     private fun getRecordId() {
@@ -209,12 +229,17 @@ class GolpeteoActivity : ToolBarActivity() {
         detailViewModel.insertDetail(detail)
         points++
         binding.textViewNoPoints.text = points.toString()
+        binding.editTextNoAdults.setText("0")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Detiene las actualizaciones de ubicación cuando el fragmento se destruye
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+    override fun onResume() {
+        super.onResume()
+        getRecordId()
     }
     private fun createLocationCallback(): LocationCallback {
         return object : LocationCallback() {

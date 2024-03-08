@@ -18,7 +18,6 @@ import movil.siafeson.citricos.models.DetailData
 class DetailViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DetailRepository = DetailRepository(DatabaseSingleton.db.detailDao())
 
-    private val _detailsList = MutableLiveData<List<DetailData>>()
 
     init {
         Log.i("DetailViewModel","ViewModel Creado")
@@ -35,9 +34,20 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
             emit(details)
         }
     }
-    fun deleteDetail(id: Int){
+    fun deleteDetail(id: Int): MutableLiveData<Unit> {
+        val liveData = MutableLiveData<Unit>()
         viewModelScope.launch {
             repository.deleteDetail(id)
+            liveData.postValue(Unit)
         }
+        return liveData
+    }
+    fun editDetail(id: Int, adults:Int): MutableLiveData<Unit>{
+        val liveData = MutableLiveData<Unit>()
+        viewModelScope.launch {
+            repository.editDetail(id,adults)
+            liveData.postValue(Unit)
+        }
+        return liveData
     }
 }
