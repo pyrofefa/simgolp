@@ -8,8 +8,10 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -135,9 +137,13 @@ class GolpeteoActivity : ToolBarActivity() {
             progressDialog.show()
 
             val data = recordViewModel.getRecord(recordId!!.toInt())
+            Log.i("Data","${data}")
             lifecycleScope.async {
 
                 val response = RecordsRequests().addRecord(data)
+                progressDialog.dismiss()
+                Toast.makeText(this@GolpeteoActivity,"${response}", Toast.LENGTH_SHORT).show()
+
             }
 
         }
@@ -171,6 +177,9 @@ class GolpeteoActivity : ToolBarActivity() {
                     binding.textViewNoPoints.text = points.toString()
                     if (detail.recurso == 1){
                         binding.switchResource.isChecked = true
+                    }
+                    if (points >= pointsRequired){
+                        binding.btnSave.isEnabled = true
                     }
                 }
             }

@@ -9,13 +9,14 @@ import movil.siafeson.citricos.models.RecordData
 
 class RecordsRequests {
 
-    suspend fun addRecord(data: LiveData<List<RecordData>>){
+    suspend fun addRecord(data: LiveData<List<RecordData>>) : String  {
         return withContext(Dispatchers.IO){
             try {
                 val response = services.addRecord("simgolp/captura",data)
-                Log.i("Respuesta","${response}")
+                Log.i("Entrando a data","${data}")
+                ""
             }catch (e: Exception){
-
+                "Error al guardar registro: ${e.message}"
             }
         }
     }
