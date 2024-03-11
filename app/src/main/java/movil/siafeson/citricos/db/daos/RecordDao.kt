@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import movil.siafeson.citricos.db.entities.RecordEntity
+import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordIdData
 import movil.siafeson.citricos.models.RecordsData
 
@@ -11,6 +12,9 @@ import movil.siafeson.citricos.models.RecordsData
 interface RecordDao {
     @Insert
     fun insertRecord(recordEntity: RecordEntity): Long
+
+    @Query("SELECT * FROM muestreo WHERE id = :id")
+    fun getRecord(id: Int) : List<RecordData>
 
     @Query("SELECT " +
             "COUNT(detalles.id) as punto, " +
@@ -41,6 +45,10 @@ interface RecordDao {
             "ORDER BY datetime(muestreo.fecha_hora) " +
             "DESC")
     suspend fun getAllRecords(): List<RecordsData>
+
+    @Query("DELETE FROM muestreo")
+    fun deleteAllRecords()
+
 }
 
 

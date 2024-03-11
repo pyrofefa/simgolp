@@ -12,13 +12,10 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import movil.siafeson.citricos.app.RetrofitHelper
-import movil.siafeson.citricos.interfaces.APIService
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.async
 import movil.siafeson.citricos.databinding.ActivityLoginBinding
-import movil.siafeson.citricos.app.MyApp
+import movil.siafeson.citricos.requests.LoginRequests
 import movil.siafeson.citricos.utils.isOnlineNet
 import movil.siafeson.citricos.utils.showProgressDialog
 
@@ -124,28 +121,15 @@ class LoginActivity : AppCompatActivity() {
         )
         progressDialog.show()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            var call = RetrofitHelper.getInstance()
-                .create(APIService::class.java)
-                .login("login/viejoEsquema",userName, password)
-            runOnUiThread {
+        lifecycleScope.async {
+            val resp = LoginRequests().login(userName,password)
+            if (resp == "success"){
                 progressDialog.dismiss()
-                if (call.status) {
-                    MyApp.preferences.userId = call.data.user_id
-                    MyApp.preferences.userName = call.data.username
-                    MyApp.preferences.name = call.data.nombre
-                    MyApp.preferences.lastName = "${call.data.apellido_paterno} ${call.data.apellido_materno}"
-                    MyApp.preferences.juntaId = call.data.junta_id
-                    MyApp.preferences.personalId = call.data.personal_id
-                    MyApp.preferences.junta = call.data.junta_name
-                    MyApp.preferences.juntaSICAFIId = call.data.junta_id
-                    MyApp.preferences.email = call.data.email
-
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    finishAffinity()
-                }else{
-                    Toast.makeText(this@LoginActivity,"${call.message}",Toast.LENGTH_SHORT).show()
-                }
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finishAffinity()
+            }else{
+                progressDialog.dismiss()
+                Toast.makeText(this@LoginActivity,"${resp}",Toast.LENGTH_SHORT).show()
             }
         }
     }

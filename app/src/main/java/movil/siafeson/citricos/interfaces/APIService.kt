@@ -1,7 +1,11 @@
 package movil.siafeson.citricos.interfaces
+import androidx.lifecycle.LiveData
 import movil.siafeson.citricos.models.LocationsResponse
 import movil.siafeson.citricos.models.LoginResponse
+import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.models.RecordsData
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -23,6 +27,7 @@ interface APIService {
 
     @POST
     suspend fun addRecord(
-        @Url url: String
+        @Url url: String,
+        @Body data: LiveData<List<RecordData>>
     )
 }

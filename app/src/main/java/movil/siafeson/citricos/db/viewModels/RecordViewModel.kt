@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import movil.siafeson.citricos.app.DatabaseSingleton
 import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.repositories.RecordRepository
+import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordIdData
 import movil.siafeson.citricos.models.RecordsData
 
@@ -51,6 +52,15 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+    fun getRecord(id:Int): LiveData<List<RecordData>>{
+        return liveData(Dispatchers.IO) {
+            val records = repository.getRecord(id)
+            if (records != null) {
+                emit(records)
+            }
+        }
+    }
+
     fun getRecordId(id: Int, week: Int, year: Int){
         viewModelScope.launch {
             try {
@@ -86,8 +96,14 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getAllRecords(): LiveData<List<RecordsData>> {
         return liveData(Dispatchers.IO) {
-            val locations = repository.getAllRecords()
-            emit(locations)
+            val records = repository.getAllRecords()
+            emit(records)
+        }
+    }
+
+    fun deleteAllRecords(){
+        viewModelScope.launch {
+            repository.deleteAllRecord()
         }
     }
 }

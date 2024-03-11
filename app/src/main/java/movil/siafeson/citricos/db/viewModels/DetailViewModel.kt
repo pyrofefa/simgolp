@@ -50,4 +50,10 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
         }
         return liveData
     }
+    fun deleteAllDetails(){
+        viewModelScope.launch {
+            repository.deleteAllDetails()
+        }
+    }
+
 }

@@ -29,4 +29,10 @@ class DetailRepository(private val detailDao: DetailDao) {
         }
     }
 
+    suspend fun deleteAllDetails(){
+        return withContext(Dispatchers.IO){
+            detailDao.deleteAllDetails()
+        }
+    }
+
 }

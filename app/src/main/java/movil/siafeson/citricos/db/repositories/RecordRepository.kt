@@ -4,7 +4,8 @@ package movil.siafeson.citricos.db.repositories
 import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.db.daos.RecordDao
 import movil.siafeson.citricos.db.entities.RecordEntity
-import movil.siafeson.citricos.models.RecordIdData
+ import movil.siafeson.citricos.models.RecordData
+ import movil.siafeson.citricos.models.RecordIdData
  import movil.siafeson.citricos.models.RecordsData
 
 class RecordRepository(private val recordDao: RecordDao){
@@ -18,6 +19,18 @@ class RecordRepository(private val recordDao: RecordDao){
             }
         }
     }
+
+    suspend fun getRecord(id: Int): List<RecordData>? {
+        return withContext(Dispatchers.IO){
+            try {
+                recordDao.getRecord(id)
+            }catch (e: Exception){
+                null
+            }
+        }
+    }
+
+
     suspend fun getRecordId(id:Int, week: Int, year:Int):List<RecordIdData>? {
         return withContext(Dispatchers.IO){
             try {
@@ -49,6 +62,12 @@ class RecordRepository(private val recordDao: RecordDao){
     suspend fun getAllRecords(): List<RecordsData>{
         return withContext(Dispatchers.IO){
             recordDao.getAllRecords()
+        }
+    }
+
+    suspend fun deleteAllRecord(){
+        return withContext(Dispatchers.IO){
+            recordDao.deleteAllRecords()
         }
     }
 }

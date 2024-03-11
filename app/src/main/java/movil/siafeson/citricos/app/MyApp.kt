@@ -24,10 +24,10 @@ class MyApp: Application() {
         super.onCreate()
         preferences = Preferences(applicationContext)
         DatabaseSingleton.initialize(this)
-        getHttpIntance()
+        getHttpInstance()
     }
 
-    fun getHttpIntance() {
+    private fun getHttpInstance() {
         if (retrofit == null) {
             val interceptor = HttpLoggingInterceptor()
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)

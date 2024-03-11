@@ -18,7 +18,9 @@ import movil.siafeson.citricos.R
 import movil.siafeson.citricos.activities.LoginActivity
 import movil.siafeson.citricos.databinding.DialogInfoBinding
 import movil.siafeson.citricos.databinding.FragmentProfileBinding
+import movil.siafeson.citricos.db.viewModels.DetailViewModel
 import movil.siafeson.citricos.db.viewModels.LocationViewModel
+import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.utils.showAlertDialog
 
 class ProfileFragment : Fragment() {
@@ -28,6 +30,8 @@ class ProfileFragment : Fragment() {
     private lateinit var mContext: Context
 
     private lateinit var locationViewModel: LocationViewModel
+    private lateinit var recordViewModel: RecordViewModel
+    private lateinit var detailViewModel: DetailViewModel
 
     private lateinit var alertDialog: AlertDialog
 
@@ -44,6 +48,8 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(layoutInflater,container,false)
         setHasOptionsMenu(true)
         locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        recordViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
+        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         return binding.root
     }
 
@@ -119,6 +125,8 @@ class ProfileFragment : Fragment() {
         MyApp.preferences.locationUpdate = false
 
         locationViewModel.deleteLocation()
+        recordViewModel.deleteAllRecords()
+        detailViewModel.deleteAllDetails()
 
         startActivity(Intent(mContext, LoginActivity::class.java))
         activity?.finishAffinity()

@@ -1,26 +1,25 @@
 package movil.siafeson.citricos.activities
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
-import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.async
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.app.MyApp
 import movil.siafeson.citricos.app.accurracyAlloWed
@@ -30,6 +29,7 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.LocationData
+import movil.siafeson.citricos.requests.RecordsRequests
 import movil.siafeson.citricos.utils.ToolBarActivity
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.calculatePointsRequired
@@ -41,6 +41,7 @@ import movil.siafeson.citricos.utils.getWeek
 import movil.siafeson.citricos.utils.getYear
 import movil.siafeson.citricos.utils.parseFecha
 import movil.siafeson.citricos.utils.showAlertDialog
+import movil.siafeson.citricos.utils.showProgressDialog
 import movil.siafeson.citricos.utils.showToast
 import java.util.Calendar
 import java.util.Date
@@ -52,6 +53,8 @@ class GolpeteoActivity : ToolBarActivity() {
     private var location: LocationData? = null
     private var isButtonEnabled = true
 
+    private lateinit var progressDialog: ProgressDialog
+
     private lateinit var recordViewModel: RecordViewModel
     private lateinit var detailViewModel: DetailViewModel
 
@@ -62,6 +65,7 @@ class GolpeteoActivity : ToolBarActivity() {
     private var distanceNetwork:Double = 0.0
 
     private var points:Int = 0
+    private var pointsRequired:Int = 0
     private var recordId: Long? = null
     private var parseResourceProducer:Int = 0
 
@@ -81,6 +85,8 @@ class GolpeteoActivity : ToolBarActivity() {
         binding.editTextNoAdults.setText("0")
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal, "Golpeteo")
         enableHomeDisplay(true)
+
+        progressDialog = ProgressDialog(this)
 
         validationHas()
         startLocationUpdates()
@@ -119,6 +125,24 @@ class GolpeteoActivity : ToolBarActivity() {
             startActivity(intent)
         }
 
+        binding.btnSave.setOnClickListener {
+            progressDialog = showProgressDialog(
+                "Guardando",
+                "",
+                this,
+                ProgressDialog.STYLE_SPINNER,
+            )
+            progressDialog.show()
+
+            val data = recordViewModel.getRecord(recordId!!.toInt())
+            lifecycleScope.async {
+
+                val response = RecordsRequests().addRecord(data)
+            }
+
+        }
+
+
         // Variable para controlar si el contenido ya se borró al obtener el foco
         val contentDelete = false
         val editText = binding.editTextNoAdults
@@ -134,7 +158,6 @@ class GolpeteoActivity : ToolBarActivity() {
             false
         }
     }
-
     private fun getRecordId() {
         val calendar = Calendar.getInstance()
         val year = calendar.getYear()
@@ -156,7 +179,7 @@ class GolpeteoActivity : ToolBarActivity() {
 
     private fun validationHas() {
         val ha = location?.superficie?.toInt()
-        val pointsRequired = ha?.let { calculatePointsRequired(it)} ?: 0
+        pointsRequired = ha?.let { calculatePointsRequired(it)} ?: 0
         binding.labelHas.text = "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
     }
 
@@ -230,6 +253,11 @@ class GolpeteoActivity : ToolBarActivity() {
         points++
         binding.textViewNoPoints.text = points.toString()
         binding.editTextNoAdults.setText("0")
+
+        if (points >= pointsRequired){
+            binding.btnSave.isEnabled = true
+        }
+
     }
 
     override fun onDestroy() {

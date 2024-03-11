@@ -1,19 +1,21 @@
 package movil.siafeson.citricos.models
 
+import androidx.room.ColumnInfo
+
 data class RecordData (
     val id: Long,
-    val userId: String,
+    @ColumnInfo(name = "user_id") val userId: String,
     val fecha: String,
-    val fechaHora: String,
+    @ColumnInfo(name = "fecha_hora") val fechaHora: String,
     val longitud: Double,
     val latitud: Double,
     val accuracy: Double,
     val recurso: Int,
-    val distanciaQr: Double,
-    val campoId: Int,
+    @ColumnInfo(name = "distancia_qr") val distanciaQr: Double,
+    @ColumnInfo(name = "campo_id") val campoId: Int,
     val ano: String,
     val semana: String,
     val status: Int,
-    val totalArboles: Int,
-    val totalAdultos: Int,
+    @ColumnInfo(name = "total_arboles") val totalArboles: Int,
+    @ColumnInfo(name = "total_adultos") val totalAdultos: Int,
 )
