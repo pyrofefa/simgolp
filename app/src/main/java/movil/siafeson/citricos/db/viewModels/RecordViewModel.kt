@@ -10,14 +10,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import movil.siafeson.citricos.app.DatabaseSingleton
+import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.entities.RecordEntity
+import movil.siafeson.citricos.db.repositories.DetailRepository
 import movil.siafeson.citricos.db.repositories.RecordRepository
 import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordIdData
 import movil.siafeson.citricos.models.RecordsData
+import movil.siafeson.citricos.models.RequestObject
+import movil.siafeson.citricos.models.ResponseObject
+import movil.siafeson.citricos.requests.RecordsRequests
+import org.json.JSONObject
 
 class RecordViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: RecordRepository = RecordRepository(DatabaseSingleton.db.recordDao())
+    private val repositoryDetail: DetailRepository = DetailRepository(DatabaseSingleton.db.detailDao())
 
     //Insertar muestreo
     private val _insertedRecordId = MutableLiveData<Long?>()
@@ -52,13 +59,56 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-    fun getRecord(id:Int): LiveData<List<RecordData>>{
-        return liveData(Dispatchers.IO) {
-            val records = repository.getRecord(id)
-            if (records != null) {
-                emit(records)
+    suspend fun getRecord(id:Int) : LiveData<ResponseObject>{
+        val resultLiveData = MutableLiveData<ResponseObject>()
+        viewModelScope.launch {
+            try {
+                val records = repository.getRecord(id)
+                val details = repositoryDetail.getDetailsRecord(id)
+                val request = transformData(records, details)
+                val response = RecordsRequests().addRecord(request)
+
+                val jsonString = response.toString() // Asigna el JSON que recibes como una cadena
+                val jsonObject = JSONObject(jsonString)
+
+                // Extraer los campos del JSON y asignarlos a la instancia de ResponseData
+                val status = jsonObject.getString("status")
+                val message = jsonObject.getString("message")
+                val log = jsonObject.getString("log")
+                val parseResponse = ResponseObject(status, message, log)
+
+                resultLiveData.postValue(parseResponse)
+
+            } catch (e: Exception) {
+                _recordId.value = null
             }
         }
+
+        return resultLiveData
+    }
+
+    private fun transformData(result: List<RecordData>?, details: List<DetailEntity>) : RequestObject {
+        return RequestObject(
+            muestreo = result,
+            pt_ind = details.joinToString(",") { detail ->
+                "${detail.punto}"
+            },
+            pt_lan = details.joinToString(",") { detail ->
+                "${detail.latitud}"
+            },
+            pt_lon = details.joinToString(",") { detail ->
+                "${detail.longitud}"
+            },
+            pt_dist = details.joinToString(",") { detail ->
+                "${detail.distanciaQr}"
+            },
+            pt_fecha = details.joinToString(",") { detail ->
+                "${detail.fecha}"
+            },
+            pt_adultos = details.joinToString(",") { detail ->
+                "${detail.adultos}"
+            },
+        )
     }
 
     fun getRecordId(id: Int, week: Int, year: Int){

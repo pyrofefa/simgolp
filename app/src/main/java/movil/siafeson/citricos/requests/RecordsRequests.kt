@@ -1,24 +1,22 @@
 package movil.siafeson.citricos.requests
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import android.app.Notification
 import movil.siafeson.citricos.app.services
-import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.models.RequestObject
+import movil.siafeson.citricos.models.ResponseObject
+import retrofit2.Response
 
-class RecordsRequests {
+class RecordsRequests() {
 
-    suspend fun addRecord(data: LiveData<List<RecordData>>) : String  {
-        return withContext(Dispatchers.IO){
-            try {
-                val response = services.addRecord("simgolp/captura",data)
-                Log.i("Entrando a data","${data}")
-                ""
-            }catch (e: Exception){
-                "Error al guardar registro: ${e.message}"
-            }
+    suspend fun addRecord(data: RequestObject) {
+        try {
+            val response = services.addRecord("simgolp/captura", data)
+            response // Devolver la respuesta directamente
+        } catch (e: Exception) {
+            null // Manejo de errores
         }
     }
+
+
 
 }

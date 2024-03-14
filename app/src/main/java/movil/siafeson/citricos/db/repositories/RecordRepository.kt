@@ -7,6 +7,8 @@ import movil.siafeson.citricos.db.entities.RecordEntity
  import movil.siafeson.citricos.models.RecordData
  import movil.siafeson.citricos.models.RecordIdData
  import movil.siafeson.citricos.models.RecordsData
+ import movil.siafeson.citricos.models.RequestObject
+ import movil.siafeson.citricos.requests.RecordsRequests
 
 class RecordRepository(private val recordDao: RecordDao){
 

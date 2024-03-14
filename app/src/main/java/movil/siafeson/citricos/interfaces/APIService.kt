@@ -1,9 +1,8 @@
 package movil.siafeson.citricos.interfaces
-import androidx.lifecycle.LiveData
+import android.app.Notification
 import movil.siafeson.citricos.models.LocationsResponse
 import movil.siafeson.citricos.models.LoginResponse
-import movil.siafeson.citricos.models.RecordData
-import movil.siafeson.citricos.models.RecordsData
+import movil.siafeson.citricos.models.RequestObject
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -28,6 +27,7 @@ interface APIService {
     @POST
     suspend fun addRecord(
         @Url url: String,
-        @Body data: LiveData<List<RecordData>>
-    )
+        @Body requestObject: RequestObject
+    ) : Response<Notification>
+
 }

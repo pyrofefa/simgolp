@@ -11,17 +11,18 @@ import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.app.MyApp
 import movil.siafeson.citricos.app.accurracyAlloWed
@@ -31,7 +32,8 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.LocationData
-import movil.siafeson.citricos.requests.RecordsRequests
+import movil.siafeson.citricos.models.RecordData
+import movil.siafeson.citricos.models.RequestObject
 import movil.siafeson.citricos.utils.ToolBarActivity
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.calculatePointsRequired
@@ -71,6 +73,8 @@ class GolpeteoActivity : ToolBarActivity() {
     private var recordId: Long? = null
     private var parseResourceProducer:Int = 0
 
+    lateinit var request:Unit
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
@@ -97,6 +101,10 @@ class GolpeteoActivity : ToolBarActivity() {
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
         getRecordId()
+
+        if (points >= pointsRequired){
+            binding.btnSave.isEnabled = true
+        }
 
         //Agregar punto
         binding.btnAdd.setOnClickListener {
@@ -136,18 +144,18 @@ class GolpeteoActivity : ToolBarActivity() {
             )
             progressDialog.show()
 
-            val data = recordViewModel.getRecord(recordId!!.toInt())
-            Log.i("Data","${data}")
-            lifecycleScope.async {
-
-                val response = RecordsRequests().addRecord(data)
-                progressDialog.dismiss()
-                Toast.makeText(this@GolpeteoActivity,"${response}", Toast.LENGTH_SHORT).show()
-
+            lifecycleScope.launch {
+                try {
+                    val result = recordViewModel.getRecord(recordId!!.toInt())
+                    Log.i("Resultado: ", "${result}")
+                    // Manejar el resultado aquí
+                } catch (e: Exception) {
+                    // Manejar el error aquí
+                } finally {
+                    progressDialog.dismiss()
+                }
             }
-
         }
-
 
         // Variable para controlar si el contenido ya se borró al obtener el foco
         val contentDelete = false
@@ -162,6 +170,20 @@ class GolpeteoActivity : ToolBarActivity() {
                 }
             }
             false
+        }
+    }
+    suspend fun someCoroutineFunction() {
+        progressDialog.show()
+        try {
+            val result = recordViewModel.getRecord(recordId!!.toInt()).observeForever(Observer {
+                res->
+                Log.i("Record View model: ", "$res")
+
+            })
+        } catch (e: Exception) {
+            Log.e("Record View model", "Error: $e")
+        } finally {
+            progressDialog.dismiss()
         }
     }
     private fun getRecordId() {

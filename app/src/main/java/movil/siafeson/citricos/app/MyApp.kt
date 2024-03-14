@@ -38,7 +38,8 @@ class MyApp: Application() {
                 .readTimeout(0, TimeUnit.SECONDS).build()
 
             retrofit = Retrofit.Builder()
-                .baseUrl("https://aplicaciones.siafeson.org.mx/public/api/")
+                .baseUrl("http://192.168.1.181/aplicaciones/public/api/")
+                //.baseUrl("https://aplicaciones.siafeson.org.mx/public/api/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

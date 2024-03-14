@@ -7,6 +7,7 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordIdData
 import movil.siafeson.citricos.models.RecordsData
+import movil.siafeson.citricos.models.RequestObject
 
 @Dao
 interface RecordDao {

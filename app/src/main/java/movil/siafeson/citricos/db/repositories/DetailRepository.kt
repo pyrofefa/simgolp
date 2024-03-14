@@ -35,4 +35,5 @@ class DetailRepository(private val detailDao: DetailDao) {
         }
     }
 
+
 }
