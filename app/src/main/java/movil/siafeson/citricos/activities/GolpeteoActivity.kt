@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,8 +22,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.app.MyApp
 import movil.siafeson.citricos.app.accurracyAlloWed
@@ -140,23 +143,36 @@ class GolpeteoActivity : ToolBarActivity() {
                 "Guardando",
                 "",
                 this,
-                ProgressDialog.STYLE_SPINNER,
+                ProgressDialog.STYLE_HORIZONTAL
+
             )
+            progressDialog.max = 2
             progressDialog.show()
 
-            lifecycleScope.launch {
-                try {
-                    val result = recordViewModel.getRecord(recordId!!.toInt())
-                    Log.i("Resultado: ", "${result}")
-                    // Manejar el resultado aquí
-                } catch (e: Exception) {
-                    // Manejar el error aquí
-                } finally {
-                    progressDialog.dismiss()
-                }
-            }
-        }
 
+            lifecycleScope.launch {
+                recordViewModel.fetchRecord(recordId!!.toInt())
+                progressDialog.setMessage("Conectando con el servidor")
+                progressDialog.progress = 1
+                recordViewModel.responseLiveData.observe(this@GolpeteoActivity, Observer {
+                    response ->
+                    if (response!!.status == "success"){
+                        progressDialog.progress = 2
+                        progressDialog.setMessage("Actualizando registro")
+                        recordViewModel.updateRecord(1,recordId!!.toInt())
+                        recordViewModel.recordUpdateId
+                        //progressDialog.dismiss()
+                    }else{
+                        progressDialog.progress = 2
+                        progressDialog.setMessage("Actualizando registro")
+                        recordViewModel.updateRecord(2,recordId!!.toInt())
+                        //progressDialog.dismiss()
+                    }
+                    //Log.i("ResponseObject", "Status: ${response!!.message}")
+                })
+            }
+
+        }
         // Variable para controlar si el contenido ya se borró al obtener el foco
         val contentDelete = false
         val editText = binding.editTextNoAdults
@@ -170,20 +186,6 @@ class GolpeteoActivity : ToolBarActivity() {
                 }
             }
             false
-        }
-    }
-    suspend fun someCoroutineFunction() {
-        progressDialog.show()
-        try {
-            val result = recordViewModel.getRecord(recordId!!.toInt()).observeForever(Observer {
-                res->
-                Log.i("Record View model: ", "$res")
-
-            })
-        } catch (e: Exception) {
-            Log.e("Record View model", "Error: $e")
-        } finally {
-            progressDialog.dismiss()
         }
     }
     private fun getRecordId() {

@@ -3,6 +3,7 @@ package movil.siafeson.citricos.db.daos
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.models.RecordData
 import movil.siafeson.citricos.models.RecordIdData
@@ -16,6 +17,9 @@ interface RecordDao {
 
     @Query("SELECT * FROM muestreo WHERE id = :id")
     fun getRecord(id: Int) : List<RecordData>
+
+    @Query("UPDATE muestreo SET status = :status WHERE id = :id")
+    fun updateRecord(status:Int, id: Int) : Int
 
     @Query("SELECT " +
             "COUNT(detalles.id) as punto, " +

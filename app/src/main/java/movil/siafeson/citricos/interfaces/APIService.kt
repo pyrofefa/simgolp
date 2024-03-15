@@ -3,6 +3,7 @@ import android.app.Notification
 import movil.siafeson.citricos.models.LocationsResponse
 import movil.siafeson.citricos.models.LoginResponse
 import movil.siafeson.citricos.models.RequestObject
+import movil.siafeson.citricos.models.ResponseObject
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -28,6 +29,6 @@ interface APIService {
     suspend fun addRecord(
         @Url url: String,
         @Body requestObject: RequestObject
-    ) : Response<Notification>
+    ) : Response<ResponseObject>
 
 }

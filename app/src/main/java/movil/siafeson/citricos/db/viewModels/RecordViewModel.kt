@@ -9,6 +9,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.app.DatabaseSingleton
 import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.entities.RecordEntity
@@ -35,6 +36,10 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
     private val _recordId = MutableLiveData<List<RecordIdData>?>()
     val recordId: MutableLiveData<List<RecordIdData>?> get() = _recordId
 
+    //Update muestreo
+    private var _recordUpdateId: Int? = 0
+    val recordUpdateId: Int? get() = _recordUpdateId
+
     //Numero de muestreos
     private val _countsRecords = MutableLiveData<Long?>()
     val countRecords: LiveData<Long?> get() = _countsRecords
@@ -42,6 +47,11 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
     //Numero de muestreos
     private val _recordsPending = MutableLiveData<Long?>()
     val recordPending: LiveData<Long?> get() = _recordsPending
+
+    //Enviando muestreo y recuperando la respuesta
+    private val _responseLiveData = MutableLiveData<ResponseObject?>()
+    val responseLiveData: LiveData<ResponseObject?>
+        get() = _responseLiveData
 
     init {
         Log.i("RecordViewModel", "ViewModel creado")
@@ -59,33 +69,33 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-    suspend fun getRecord(id:Int) : LiveData<ResponseObject>{
-        val resultLiveData = MutableLiveData<ResponseObject>()
+    fun updateRecord(status: Int, id: Int){
+        viewModelScope.launch {
+            try {
+                 val updateId = repository.updateRecord(status,id)
+                Log.i("result", "La variable result trae: ${updateId}")
+                _recordUpdateId = updateId
+            }catch (e: Exception){
+
+            }
+        }
+    }
+
+
+    fun fetchRecord(id: Int) {
         viewModelScope.launch {
             try {
                 val records = repository.getRecord(id)
                 val details = repositoryDetail.getDetailsRecord(id)
                 val request = transformData(records, details)
-                val response = RecordsRequests().addRecord(request)
-
-                val jsonString = response.toString() // Asigna el JSON que recibes como una cadena
-                val jsonObject = JSONObject(jsonString)
-
-                // Extraer los campos del JSON y asignarlos a la instancia de ResponseData
-                val status = jsonObject.getString("status")
-                val message = jsonObject.getString("message")
-                val log = jsonObject.getString("log")
-                val parseResponse = ResponseObject(status, message, log)
-
-                resultLiveData.postValue(parseResponse)
-
+                val response = RecordsRequests().addRecord2(request)
+                _responseLiveData.value = response
             } catch (e: Exception) {
-                _recordId.value = null
+                Log.e("Error", "Error al obtener el registro: ${e.message}")
             }
         }
-
-        return resultLiveData
     }
+
 
     private fun transformData(result: List<RecordData>?, details: List<DetailEntity>) : RequestObject {
         return RequestObject(

@@ -22,6 +22,16 @@ class RecordRepository(private val recordDao: RecordDao){
         }
     }
 
+    suspend fun updateRecord(status: Int, id: Int): Int? {
+        return withContext(Dispatchers.IO){
+            try {
+                recordDao.updateRecord(status,id)
+            }catch (e: Exception){
+                null
+            }
+        }
+    }
+
     suspend fun getRecord(id: Int): List<RecordData>? {
         return withContext(Dispatchers.IO){
             try {
