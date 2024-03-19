@@ -9,7 +9,6 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.app.DatabaseSingleton
 import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.entities.RecordEntity
@@ -21,7 +20,7 @@ import movil.siafeson.citricos.models.RecordsData
 import movil.siafeson.citricos.models.RequestObject
 import movil.siafeson.citricos.models.ResponseObject
 import movil.siafeson.citricos.requests.RecordsRequests
-import org.json.JSONObject
+import movil.siafeson.citricos.utils.Result
 
 class RecordViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: RecordRepository = RecordRepository(DatabaseSingleton.db.recordDao())
@@ -35,10 +34,6 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
     //Muestreo Id
     private val _recordId = MutableLiveData<List<RecordIdData>?>()
     val recordId: MutableLiveData<List<RecordIdData>?> get() = _recordId
-
-    //Update muestreo
-    private var _recordUpdateId: Int? = 0
-    val recordUpdateId: Int? get() = _recordUpdateId
 
     //Numero de muestreos
     private val _countsRecords = MutableLiveData<Long?>()
@@ -69,19 +64,25 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-    fun updateRecord(status: Int, id: Int){
-        viewModelScope.launch {
-            try {
-                 val updateId = repository.updateRecord(status,id)
-                Log.i("result", "La variable result trae: ${updateId}")
-                _recordUpdateId = updateId
-            }catch (e: Exception){
-
-            }
+    suspend fun updateRecord(status: Int, id: Int): Result<Int?> {
+        return try {
+            val updateId = repository.updateRecord(status, id)
+            Result.Success(updateId)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
 
+    suspend fun updateRecordTotals(id: Int, adults: Int, points: Int): Result<Int?> {
+        return try {
+            val updateId = repository.updateRecordTotal(id,adults, points)
+            Result.Success(updateId)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 
+    //Finalizar
     fun fetchRecord(id: Int) {
         viewModelScope.launch {
             try {
@@ -92,6 +93,7 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
                 _responseLiveData.value = response
             } catch (e: Exception) {
                 Log.e("Error", "Error al obtener el registro: ${e.message}")
+                _responseLiveData.value = null
             }
         }
     }

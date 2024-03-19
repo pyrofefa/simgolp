@@ -311,7 +311,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:background="@color/colorAccent"
                     android:text="@string/btnAdd"
                     android:textColor="@color/white" />
 
@@ -361,7 +361,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="18dp"
                         android:layout_toEndOf="@id/labelNoPoints"
-                        android:backgroundTint="@color/colorAccent"
+                        android:background="@color/colorAccent"
                         android:text="ver"
                         android:textColor="@color/white" />
 
@@ -378,9 +378,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginBottom="21dp"
             android:text="----"
+            android:textAlignment="center"
             android:textColor="@color/colorWarning"
-            android:textSize="12sp"
+            android:textSize="15sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -397,7 +399,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/btnSave"
             android:textAlignment="center"
-            android:backgroundTint="@color/colorPrimary"
+            android:background="@color/colorPrimary"
             android:enabled="false"
             android:textColor="@color/cardview_light_background"
             app:layout_constraintBottom_toBottomOf="parent"

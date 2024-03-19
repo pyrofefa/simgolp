@@ -12,20 +12,15 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import movil.siafeson.citricos.R
 import movil.siafeson.citricos.app.MyApp
 import movil.siafeson.citricos.app.accurracyAlloWed
@@ -35,8 +30,7 @@ import movil.siafeson.citricos.db.entities.RecordEntity
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
 import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.models.LocationData
-import movil.siafeson.citricos.models.RecordData
-import movil.siafeson.citricos.models.RequestObject
+import movil.siafeson.citricos.utils.Result
 import movil.siafeson.citricos.utils.ToolBarActivity
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.calculatePointsRequired
@@ -76,7 +70,7 @@ class GolpeteoActivity : ToolBarActivity() {
     private var recordId: Long? = null
     private var parseResourceProducer:Int = 0
 
-    lateinit var request:Unit
+    private var noAdults = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +101,12 @@ class GolpeteoActivity : ToolBarActivity() {
 
         if (points >= pointsRequired){
             binding.btnSave.isEnabled = true
+            binding.btnAdd.isEnabled = false
+            binding.labelHas.text = "Llegó al límite de puntos"
+        }
+
+        if(points == 0){
+            binding.btnView.isEnabled = false
         }
 
         //Agregar punto
@@ -156,22 +156,25 @@ class GolpeteoActivity : ToolBarActivity() {
                 progressDialog.progress = 1
                 recordViewModel.responseLiveData.observe(this@GolpeteoActivity, Observer {
                     response ->
-                    if (response!!.status == "success"){
-                        progressDialog.progress = 2
-                        progressDialog.setMessage("Actualizando registro")
-                        recordViewModel.updateRecord(1,recordId!!.toInt())
-                        recordViewModel.recordUpdateId
-                        //progressDialog.dismiss()
+                    Log.i("Respuesta:", "$response")
+                    if(response != null) {
+                        if (response!!.status == "success"){
+                            progressDialog.setMessage("Actualizando registro")
+                            progressDialog.progress = 2
+                            updateRecordStatus(1, message = response.message)
+
+                        }else{
+                            progressDialog.setMessage("Actualizando registro")
+                            progressDialog.progress = 2
+                            updateRecordStatus(2, message = response.message)
+                        }
                     }else{
-                        progressDialog.progress = 2
                         progressDialog.setMessage("Actualizando registro")
-                        recordViewModel.updateRecord(2,recordId!!.toInt())
-                        //progressDialog.dismiss()
+                        progressDialog.progress = 2
+                        updateRecordStatus(2, message = "Registro guardado localmente")
                     }
-                    //Log.i("ResponseObject", "Status: ${response!!.message}")
                 })
             }
-
         }
         // Variable para controlar si el contenido ya se borró al obtener el foco
         val contentDelete = false
@@ -188,6 +191,33 @@ class GolpeteoActivity : ToolBarActivity() {
             false
         }
     }
+
+    private fun updateRecordStatus(status: Int, message: String) {
+        lifecycleScope.launch {
+            try {
+                when(val result = recordViewModel.updateRecord(status, recordId!!.toInt())){
+                    is Result.Success -> {
+                        val updateRecordId = result.data
+                        if (updateRecordId != null) {
+                            progressDialog.dismiss()
+                            showToast(this@GolpeteoActivity,"${message}")
+                            startActivity(Intent(this@GolpeteoActivity, MainActivity::class.java))
+                            finishAffinity()
+                        } else {
+                            showToast(this@GolpeteoActivity,"Ocurrió un error al actualizar registro")
+                        }
+                    }
+                    is Result.Error ->{
+                        val exception = result.exception
+                        showToast(this@GolpeteoActivity,"Ocurrió un error al actualizar registro: $exception")
+                    }
+                }
+            }catch (e: Exception) {
+                showToast(this@GolpeteoActivity,"Ocurrió un error al actualizar registro: ${e.message}")
+            }
+        }
+    }
+
     private fun getRecordId() {
         val calendar = Calendar.getInstance()
         val year = calendar.getYear()
@@ -204,7 +234,10 @@ class GolpeteoActivity : ToolBarActivity() {
                     }
                     if (points >= pointsRequired){
                         binding.btnSave.isEnabled = true
+                        binding.btnAdd.isEnabled = false
+                        binding.labelHas.text = "Llegó al límite de puntos"
                     }
+                    binding.btnView.isEnabled = points != 0
                 }
             }
         })
@@ -213,7 +246,22 @@ class GolpeteoActivity : ToolBarActivity() {
     private fun validationHas() {
         val ha = location?.superficie?.toInt()
         pointsRequired = ha?.let { calculatePointsRequired(it)} ?: 0
-        binding.labelHas.text = "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
+
+        Log.i("Puntos:", "$points")
+        Log.i("Puntos Requeridos:", "$pointsRequired")
+
+
+        if (points >= pointsRequired){
+            binding.btnSave.isEnabled = true
+            binding.btnAdd.isEnabled = false
+            binding.labelHas.text = "Llegó al límite de puntos"
+        }
+        else{
+            binding.btnSave.isEnabled = false
+            binding.btnAdd.isEnabled = true
+            binding.labelHas.text = "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
+        }
+
     }
 
     private fun addRecord() {
@@ -233,6 +281,8 @@ class GolpeteoActivity : ToolBarActivity() {
             parseResourceProducer = 0
         }
 
+        val numberAdults = binding.editTextNoAdults.text.toString()
+
         val record = RecordEntity(
             userId = MyApp.preferences.userId.toString(),
             fecha = formattedDate,
@@ -245,9 +295,9 @@ class GolpeteoActivity : ToolBarActivity() {
             campoId = location!!.id_bit,
             ano = year.toString(),
             semana = week.toString(),
-            status = 2,
+            status = 3,
             totalArboles = 1,
-            totalAdultos = 0,
+            totalAdultos = numberAdults.toInt(),
             created = formattedDateTime,
             createdSat = parseDate,
             modified = formattedDateTime,
@@ -263,6 +313,11 @@ class GolpeteoActivity : ToolBarActivity() {
             }
         })
         binding.textViewNoPoints.text = points.toString()
+
+        if (points == pointsRequired){
+            binding.btnAdd.isEnabled = false
+            binding.labelHas.text = "Llegó al límite de puntos"
+        }
     }
 
     private fun addDetail(id: Long) {
@@ -277,7 +332,7 @@ class GolpeteoActivity : ToolBarActivity() {
             latitud = currentLatitude,
             accuracy = currentAccuracy,
             distanciaQr = distanceNetwork,
-            status = 2,
+            status = 3,
             muestreoId = id.toInt(),
             adultos = numberAdults.toInt(),
             fecha = formattedDateTime
@@ -289,8 +344,21 @@ class GolpeteoActivity : ToolBarActivity() {
 
         if (points >= pointsRequired){
             binding.btnSave.isEnabled = true
+            binding.btnAdd.isEnabled = false
+            binding.labelHas.text = "Llegó al límite de puntos"
         }
+        binding.btnView.isEnabled = true
 
+        detailViewModel.getDetailsRecord(id.toInt()).observe(this, Observer { result ->
+            result.forEach { data ->
+                if (data.adultos > 0){
+                    noAdults += data.adultos
+                }
+            }
+        })
+        lifecycleScope.launch {
+            recordViewModel.updateRecordTotals(id.toInt(), noAdults, points)
+        }
     }
 
     override fun onDestroy() {
@@ -301,6 +369,7 @@ class GolpeteoActivity : ToolBarActivity() {
     override fun onResume() {
         super.onResume()
         getRecordId()
+        validationHas()
     }
     private fun createLocationCallback(): LocationCallback {
         return object : LocationCallback() {

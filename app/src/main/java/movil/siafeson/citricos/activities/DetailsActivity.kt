@@ -2,6 +2,7 @@ package movil.siafeson.citricos.activities
 
 import DetailsAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.widget.ListView
 import androidx.lifecycle.Observer
@@ -36,6 +37,9 @@ class DetailsActivity : ToolBarActivity(), DetailInterface {
         val recordId = intent.getLongExtra("muestreo_id", 0)
         detailViewModel.getDetailsRecord(recordId.toInt()).observe(this, Observer { detailsEntityList ->
             //Log.i("detailsEntityList","${detailsEntityList}")
+            if (detailsEntityList.isEmpty()){
+                super.onBackPressed()
+            }
             //Log.i("Cambio-observador","Se ha detectado un cambio en el observador")
             val detailsDataList = detailsEntityList.map {  detailsEntity ->
                 transformData(detailsEntity)
@@ -92,7 +96,6 @@ class DetailsActivity : ToolBarActivity(), DetailInterface {
             noAdults = 0
             getDetails()
             showToast(this,"Registro eliminado")
-
         })
     }
 

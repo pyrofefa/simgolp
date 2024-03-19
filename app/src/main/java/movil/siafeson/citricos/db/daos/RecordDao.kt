@@ -21,6 +21,9 @@ interface RecordDao {
     @Query("UPDATE muestreo SET status = :status WHERE id = :id")
     fun updateRecord(status:Int, id: Int) : Int
 
+    @Query("UPDATE muestreo SET total_arboles = :points, total_adultos = :adults WHERE id = :id")
+    fun updateRecordTotals(id: Int, adults: Int, points: Int) : Int
+
     @Query("SELECT " +
             "COUNT(detalles.id) as punto, " +
             "muestreo.id, " +
