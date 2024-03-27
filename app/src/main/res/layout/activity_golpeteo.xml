@@ -335,12 +335,23 @@
                     android:layout_marginTop="15dp">
 
                     <TextView
-                        android:id="@+id/textViewNoPoints"
+                        android:id="@+id/labelNoAdults"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:text="Adultos:"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textViewNoAdults"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_marginStart="8dp"
-                        android:layout_toStartOf="@id/labelNoPoints"
+                        android:layout_toEndOf="@id/labelNoAdults"
                         android:text="0"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -350,8 +361,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
+                        android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@id/textViewNoAdults"
+                        android:text="Puntos:"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textViewNoPoints"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:layout_marginStart="8dp"
-                        android:text="Puntos"
+                        android:layout_toEndOf="@id/labelNoPoints"
+                        android:text="0"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -359,13 +382,14 @@
                         android:id="@+id/btnView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="18dp"
+                        android:layout_marginStart="50dp"
                         android:layout_toEndOf="@id/labelNoPoints"
                         android:background="@color/colorAccent"
                         android:text="ver"
                         android:textColor="@color/white" />
 
                 </RelativeLayout>
+
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

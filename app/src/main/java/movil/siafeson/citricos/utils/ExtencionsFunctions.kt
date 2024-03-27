@@ -1,12 +1,15 @@
 package movil.siafeson.citricos.utils
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Context
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -130,6 +133,16 @@ fun parseFecha(inputFecha: String): String {
     return fecha?.let { formatoSalida.format(it) } ?: ""
 }
 
+fun parseFechaInRecods(inputFecha: String): String {
+    val formatoEntrada = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val fecha = formatoEntrada.parse(inputFecha)
+
+    val formatoSalida = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
+
+    return fecha?.let { formatoSalida.format(it) } ?: ""
+}
+
+
 fun showToast(context: Context, mensaje: String) {
     Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
 }
@@ -144,4 +157,25 @@ fun calculatePointsRequired(has: Int): Int {
         has >= 75.25 -> 200
         else -> 0
     }
+}
+
+// Extensión de función para mostrar un DatePickerDialog y manejar la fecha seleccionada
+fun showDatePickerDialog(context: Context, button: ImageButton, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            onDateSelected(selectedDate)
+        },
+        year,
+        month,
+        day
+    )
+
+    datePickerDialog.show()
 }

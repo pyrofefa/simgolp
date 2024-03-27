@@ -29,7 +29,7 @@ interface RecordDao {
             "muestreo.id, " +
             "muestreo.status, " +
             "muestreo.semana, " +
-            "muestreo.recurso " +
+            "muestreo.recurso, muestreo.total_adultos as totalAdultos " +
             "FROM muestreo " +
             "LEFT JOIN detalles ON detalles.muestreo_id = muestreo.id " +
             "WHERE muestreo.campo_id = :id " +

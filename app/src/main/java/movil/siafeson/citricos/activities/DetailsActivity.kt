@@ -7,9 +7,12 @@ import android.view.KeyEvent
 import android.widget.ListView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import movil.siafeson.citricos.databinding.ActivityDetailsBinding
 import movil.siafeson.citricos.db.entities.DetailEntity
 import movil.siafeson.citricos.db.viewModels.DetailViewModel
+import movil.siafeson.citricos.db.viewModels.RecordViewModel
 import movil.siafeson.citricos.interfaces.DetailInterface
 import movil.siafeson.citricos.models.DetailData
 import movil.siafeson.citricos.utils.ToolBarActivity
@@ -17,6 +20,7 @@ import movil.siafeson.citricos.utils.showToast
 
 class DetailsActivity : ToolBarActivity(), DetailInterface {
 
+    private lateinit var recordViewModel: RecordViewModel
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var listView: ListView
@@ -29,6 +33,7 @@ class DetailsActivity : ToolBarActivity(), DetailInterface {
         toolbarToLoad(toolbar = binding.toolbar.toolbarGlobal, "Detalle")
         enableHomeDisplay(true)
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        recordViewModel = ViewModelProvider(this).get(RecordViewModel::class.java)
         listView = binding.divDetails
         getDetails()
     }
@@ -60,6 +65,9 @@ class DetailsActivity : ToolBarActivity(), DetailInterface {
             binding.footerLayout.textView4.text = noAdults.toString()
 
             adapter.updateData(detailsDataList)
+            lifecycleScope.launch {
+                recordViewModel.updateRecordTotals(recordId.toInt(), noAdults, totalPoints)
+            }
         })
     }
 

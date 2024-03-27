@@ -102,9 +102,10 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
     private fun transformData(result: List<RecordData>?, details: List<DetailEntity>) : RequestObject {
         return RequestObject(
             muestreo = result,
-            pt_ind = details.joinToString(",") { detail ->
-                "${detail.punto}"
-            },
+            pt_ind = List(details.size) { index ->
+                val i = index + 1
+                "$i"
+            }.joinToString(","),
             pt_lan = details.joinToString(",") { detail ->
                 "${detail.latitud}"
             },

@@ -34,8 +34,6 @@ import movil.siafeson.citricos.models.LocationData
 import movil.siafeson.citricos.utils.Utileria
 import movil.siafeson.citricos.utils.fechaCompleta
 import movil.siafeson.citricos.utils.getFormattedDate
-import movil.siafeson.citricos.utils.getWeek
-import movil.siafeson.citricos.utils.getYear
 import movil.siafeson.citricos.utils.nombreDiaActual
 import java.util.Calendar
 

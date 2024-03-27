@@ -99,10 +99,12 @@ class GolpeteoActivity : ToolBarActivity() {
 
         getRecordId()
 
-        if (points >= pointsRequired){
-            binding.btnSave.isEnabled = true
-            binding.btnAdd.isEnabled = false
-            binding.labelHas.text = "Llegó al límite de puntos"
+        if (location?.superficie?.toInt() != 0){
+            if (points >= pointsRequired){
+                binding.btnSave.isEnabled = true
+                binding.btnAdd.isEnabled = false
+                binding.labelHas.text = "Llegó al límite de puntos"
+            }
         }
 
         if(points == 0){
@@ -228,16 +230,25 @@ class GolpeteoActivity : ToolBarActivity() {
                 if (detail.id > 0){
                     recordId = detail.id.toLong()
                     points = detail.punto
+                    noAdults = detail.totalAdultos
                     binding.textViewNoPoints.text = points.toString()
+                    binding.textViewNoAdults.text = noAdults.toString()
                     if (detail.recurso == 1){
                         binding.switchResource.isChecked = true
                     }
-                    if (points >= pointsRequired){
-                        binding.btnSave.isEnabled = true
-                        binding.btnAdd.isEnabled = false
-                        binding.labelHas.text = "Llegó al límite de puntos"
+                    if (location?.superficie?.toInt() != 0) {
+                        if (points >= pointsRequired) {
+                            binding.btnSave.isEnabled = true
+                            binding.btnAdd.isEnabled = false
+                            binding.labelHas.text = "Llegó al límite de puntos"
+                        }
+                        binding.btnView.isEnabled = points != 0
                     }
-                    binding.btnView.isEnabled = points != 0
+                    else{
+                        binding.labelHas.text = ""
+                        binding.btnView.isEnabled = true
+                        binding.btnSave.isEnabled = true
+                    }
                 }
             }
         })
@@ -250,18 +261,20 @@ class GolpeteoActivity : ToolBarActivity() {
         Log.i("Puntos:", "$points")
         Log.i("Puntos Requeridos:", "$pointsRequired")
 
+        Log.i("Superficie","${ha}")
 
-        if (points >= pointsRequired){
-            binding.btnSave.isEnabled = true
-            binding.btnAdd.isEnabled = false
-            binding.labelHas.text = "Llegó al límite de puntos"
+        if(ha != 0) {
+            if (points >= pointsRequired) {
+                binding.btnSave.isEnabled = true
+                binding.btnAdd.isEnabled = false
+                binding.labelHas.text = "Llegó al límite de puntos"
+            } else {
+                binding.btnSave.isEnabled = false
+                binding.btnAdd.isEnabled = true
+                binding.labelHas.text =
+                    "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
+            }
         }
-        else{
-            binding.btnSave.isEnabled = false
-            binding.btnAdd.isEnabled = true
-            binding.labelHas.text = "-Necesita completar un mínimo de: ${pointsRequired} puntos para finalizar-"
-        }
-
     }
 
     private fun addRecord() {
@@ -282,6 +295,7 @@ class GolpeteoActivity : ToolBarActivity() {
         }
 
         val numberAdults = binding.editTextNoAdults.text.toString()
+        noAdults += numberAdults.toInt()
 
         val record = RecordEntity(
             userId = MyApp.preferences.userId.toString(),
@@ -313,18 +327,21 @@ class GolpeteoActivity : ToolBarActivity() {
             }
         })
         binding.textViewNoPoints.text = points.toString()
+        binding.textViewNoAdults.text = noAdults.toString()
 
-        if (points == pointsRequired){
-            binding.btnAdd.isEnabled = false
-            binding.labelHas.text = "Llegó al límite de puntos"
+        if(location?.superficie?.toInt() != 0){
+            if (points == pointsRequired){
+                binding.btnAdd.isEnabled = false
+                binding.labelHas.text = "Llegó al límite de puntos"
+            }
         }
     }
 
     private fun addDetail(id: Long) {
         val calendar = Calendar.getInstance()
         val formattedDateTime = calendar.getFormattedDateTime()
-
         val numberAdults = binding.editTextNoAdults.text.toString()
+        points++
 
         val detail = DetailEntity(
             punto = points,
@@ -338,26 +355,27 @@ class GolpeteoActivity : ToolBarActivity() {
             fecha = formattedDateTime
         )
         detailViewModel.insertDetail(detail)
-        points++
         binding.textViewNoPoints.text = points.toString()
         binding.editTextNoAdults.setText("0")
 
-        if (points >= pointsRequired){
-            binding.btnSave.isEnabled = true
-            binding.btnAdd.isEnabled = false
-            binding.labelHas.text = "Llegó al límite de puntos"
-        }
-        binding.btnView.isEnabled = true
-
-        detailViewModel.getDetailsRecord(id.toInt()).observe(this, Observer { result ->
-            result.forEach { data ->
-                if (data.adultos > 0){
-                    noAdults += data.adultos
-                }
+        if(location?.superficie?.toInt() != 0){
+            if (points >= pointsRequired){
+                binding.btnSave.isEnabled = true
+                binding.btnAdd.isEnabled = false
+                binding.labelHas.text = "Llegó al límite de puntos"
             }
-        })
+        }
+
+        binding.btnView.isEnabled = true
+        noAdults += numberAdults.toInt()
+        binding.textViewNoAdults.text = noAdults.toString()
+        updateTotals(id.toInt())
+
+    }
+
+    private fun updateTotals(id: Int) {
         lifecycleScope.launch {
-            recordViewModel.updateRecordTotals(id.toInt(), noAdults, points)
+            recordViewModel.updateRecordTotals(id, noAdults, points)
         }
     }
 
@@ -403,9 +421,9 @@ class GolpeteoActivity : ToolBarActivity() {
     }
     private fun updateLocation(myLocation: Location) {
         // Implementa la lógica para actualizar la ubicación en el fragmento
-        binding.tvPosLlat.text = "${String.format("%.6f",myLocation.latitude)}"
-        binding.tvPosLon.text = "${String.format("%.6f",myLocation.longitude)}"
-        binding.tvPosAcc.text = "${String.format("%.2f",myLocation.accuracy)}"
+        binding.tvPosLlat.text = "${String.format("%.6f", myLocation.latitude)}"
+        binding.tvPosLon.text = "${String.format("%.6f", myLocation.longitude)}"
+        binding.tvPosAcc.text = "${String.format("%.2f", myLocation.accuracy)}"
 
         currentLatitude = myLocation.latitude
         currentLongitude = myLocation.longitude
@@ -421,8 +439,11 @@ class GolpeteoActivity : ToolBarActivity() {
         field.latitude = location?.latitud ?: 0.0
         field.longitude = location?.longitud ?: 0.0
 
+        Log.i("field.latitude","${field.latitude}")
+        Log.i("field.longitude","${field.longitude}")
+
         distanceNetwork = field.distanceTo(myLocation).toDouble()
-        val bear = field.bearingTo(field)
+        val bear = field.bearingTo(myLocation)
         val orientation = Utileria().getOrien(bear)
 
         if (myLocation.accuracy <= accurracyAlloWed) {
@@ -431,7 +452,6 @@ class GolpeteoActivity : ToolBarActivity() {
             subTitulo(getString(R.string.form_lbl_info_espera))
         }
         binding.tvDistancia.text = "${String.format("%.1f", distanceNetwork)} m. | Dir: $orientation"
-
     }
     override fun onSupportNavigateUp(): Boolean {
         if (points > 0) {

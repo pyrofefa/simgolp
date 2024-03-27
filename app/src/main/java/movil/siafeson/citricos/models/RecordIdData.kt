@@ -5,5 +5,6 @@ data class RecordIdData (
     val punto:Int,
     val status:Int,
     val semana: Int,
-    val recurso: Int
+    val recurso: Int,
+    val totalAdultos: Int
 )
